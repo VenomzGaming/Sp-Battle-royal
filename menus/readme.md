@@ -1,5 +1,5 @@
-TODO :
-Inventory menu
-Item menu to show information
-Rank menu
-Maybe other menu
+# TODO :
+Inventory menu <br>
+Item menu to show information <br>
+Rank menu <br>
+Maybe other menu <br>
