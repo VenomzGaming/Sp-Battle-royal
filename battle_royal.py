@@ -9,8 +9,8 @@ from players.entity import Player
 from .events import *
 from .hooks import *
 from .info import info
-from .models.battleroyal import _battle_royal
-from .models.player import Player as BrPlayer
+from .entity.battleroyal import _battle_royal
+from .entity.player import Player as BrPlayer
 
 def load():
     pass

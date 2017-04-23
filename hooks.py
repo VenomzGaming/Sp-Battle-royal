@@ -13,18 +13,9 @@ from messages import SayText2
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
 
-# try:
-from .models.battleroyal import _battle_royal
-# except:
-#     pass
 
-__all__ = (
-    '_authorize_weapon',
-)
-
-## GLOBALS
-
-_authorize_weapon = []
+from .entity.battleroyal import _battle_royal
+from .globals import _authorize_weapon
 
 ## MANAGE TEAM
 

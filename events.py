@@ -14,8 +14,8 @@ from players import UserCmd
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_pointer
 
-from .models.battleroyal import _battle_royal
-from .models.player import Player as BrPlayer
+from .entity.battleroyal import _battle_royal
+from .entity.player import Player as BrPlayer
 from .items.item import Item
 
 HIDEHUD_RADAR = 1 << 12
@@ -36,7 +36,6 @@ def _on_round_start(event_data):
     # entity = ak.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
     # _battle_royal.add_item_ent(entity, ak)
 
-    SayText2(str(Item.get_subclass_dict())).send()
     # for cls in Item.get_subclass_dict().values():
     #     SayText2(str(cls)).send()
     #     SayText2(str(cls.get_subclass_dict())).send()

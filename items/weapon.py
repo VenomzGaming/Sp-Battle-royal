@@ -1,13 +1,11 @@
 ## IMPORTS
 
-print('===== HERE WEAPON =====')
-
 from entities.entity import Entity
 from entities.helpers import index_from_pointer
 from messages import SayText2
 
 from .item import Item
-from ..hooks import _authorize_weapon
+from ..globals import _authorize_weapon
 
 
 class Weapon(Item):
@@ -29,7 +27,7 @@ class Weapon(Item):
             weapon_name = 'weapon_' + self.__class__.__name__.lower()
             weapon_pointer = player.give_named_item(weapon_name, 0, None, True)
             weapon = Entity(index_from_pointer(weapon_pointer))
-            _authorize_weapon.append(index_from_pointer(weapon_pointer))
+            # _authorize_weapon.append(index_from_pointer(weapon_pointer))
             callback(player, weapon)
      
         player.delay(0, delay_callback)

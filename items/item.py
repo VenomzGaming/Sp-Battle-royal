@@ -42,8 +42,6 @@ class Item:
 
     @classmethod
     def get_subclasses(cls):
-        print('==== SUBCLASS ====')
-        print(str(cls.__subclasses__()))
         for subcls in cls.__subclasses__():
             yield subcls
             yield from subcls.get_subclasses()

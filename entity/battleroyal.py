@@ -11,7 +11,7 @@ from ..items.item import Item
 
 __all__ = (
     'BattleRoyal',
-    '_battle_royal',
+    '_battle_royal'
 )
 
 
@@ -122,7 +122,6 @@ class BattleRoyal:
         self._teams.clear()
         self._dead_players.clear()
         
-
 ## GLOBALS
 
 _battle_royal = BattleRoyal()
