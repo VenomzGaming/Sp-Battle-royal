@@ -2,6 +2,7 @@
 
 from entities.entity import Entity
 from filters.players import PlayerIter
+from messages import SayText2
 
 from .player import Player
 from ..items import Item
@@ -102,12 +103,15 @@ class BattleRoyal:
         self.status = False
 
         # Remove all spawned entities
+        SayText2(str(self._items_ents)).send()
         for index, item in self._items_ents.items():
+            SayText2('Index : ' + str(index)).send()
             Entity(index).remove()
 
         self._items_ents.clear()
 
         # Remove all spawned backpack entities
+        SayText2(str(self._players_backpack_ents)).send()
         for index, item in self._players_backpack_ents.items():
             Entity(index).remove()
 

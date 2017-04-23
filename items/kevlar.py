@@ -7,7 +7,6 @@ from messages import SayText2
 
 class Kevlar(Item):
     name = 'Kevlar'
-    item_type = 'armor'
     armor = 100
     weight = 0
     models = ''

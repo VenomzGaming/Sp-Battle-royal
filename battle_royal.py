@@ -9,7 +9,7 @@ from players.entity import Player
 from .events import *
 from .hooks import *
 from .info import info
-from .models.battleroyal import BattleRoyal, _battle_royal
+from .models.battleroyal import _battle_royal
 from .models.player import Player as BrPlayer
 
 def load():
@@ -49,4 +49,4 @@ def _open_inventory(command, index, team_only=None):
 @SayCommand('location')
 def _open_inventory(command, index, team_only=None):
     player = Player(index)
-    SayText2(str(player.origin)).send()
+    SayText2(str(player.view_vector)).send()

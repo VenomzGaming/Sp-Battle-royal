@@ -3,23 +3,21 @@
 from glob import glob
 from os.path import dirname, basename, isfile
 
-from engines.precache import Model
 from entities.entity import Entity
+from entities.helpers import index_from_pointer
+from engines.precache import Model
 from messages import SayText2
 
 ## ALL DECLARATIONS
 
 __all__ = (
     'Item',
-    'Weapon',
-    'Ammo',
 )
 
 ## INIT ALL HERO MODULES
 
 modules = glob(dirname(__file__) + '/*.py')
 items = tuple(basename(f)[:-3] for f in modules if isfile(f))
-
 __all__ += items
 
 
@@ -63,19 +61,3 @@ class Item:
     @classmethod
     def get_subclass_dict(cls):
         return { subcls.__name__: subcls for subcls in cls.get_subclasses() }
-
-
-class Weapon(Item):
-
-    def equip(self):
-        SayText2('Can\'t equip').send()
-
-
-class Ammo(Item):
-    clip = 0
-    ammo = 10
-
-    def use(self):
-        SayText2('Can\'t use').send()
-
-

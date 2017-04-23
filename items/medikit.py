@@ -7,7 +7,6 @@ from messages import SayText2
 
 class Medikit(Item):
     name = 'Medic Kit'
-    item_type = 'care'
     heal = 50
     weight = 0
     models = ''

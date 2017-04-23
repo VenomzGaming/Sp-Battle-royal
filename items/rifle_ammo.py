@@ -7,7 +7,6 @@ from messages import SayText2
 
 class Rifle_Ammo(Ammo):
     name = 'Rifle Ammo'
-    item_type = 'ammo'
     weight = 0
     models = ''
 

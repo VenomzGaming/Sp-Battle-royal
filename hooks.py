@@ -13,8 +13,14 @@ from messages import SayText2
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
 
+# try:
 from .models.battleroyal import _battle_royal
-from .items import Item
+# except:
+#     pass
+
+__all__ = (
+    '_authorize_weapon',
+)
 
 ## GLOBALS
 
@@ -62,10 +68,6 @@ def _on_weapon_drop(stack):
     # item = _battle_royal.get_item_ent[entity.index]
     # brPlayer.drop(item)
 
-
-def on_item_given(player, item):
-    SayText2('Player {} has got {} !'.format(player.name, item.classname)).send()
-
 @EntityPreHook(EntityCondition.equals_entity_classname('prop_physics_override'), 'use')
 @EntityPreHook(lambda entity: entity.classname.startswith('weapon_'), 'use')
 def _on_pick_up_item(stack):
@@ -79,12 +81,11 @@ def _on_pick_up_item(stack):
     br_player = _battle_royal.get_player(player)
     item = _battle_royal.get_item_ent(entity)
     success = br_player.pick_up(item)
-    SayText2(str(success)).send()
 
     if success:
         entity.remove()
         # Refactor item code to make all items call by one function
-        item.equip(br_player, on_item_given)
+        item.equip(br_player)
         SayText2('Take ' + br_player.name).send()
 
 
