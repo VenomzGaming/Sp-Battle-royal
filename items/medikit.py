@@ -1,11 +1,11 @@
 ## IMPORTS
 
-from . import Item
+from .care import Care
 
 from messages import SayText2
 
 
-class Medikit(Item):
+class Medikit(Care):
     name = 'Medic Kit'
     heal = 50
     weight = 0

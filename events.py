@@ -16,7 +16,7 @@ from players.helpers import index_from_userid, userid_from_pointer
 
 from .models.battleroyal import _battle_royal
 from .models.player import Player as BrPlayer
-from .items import Item
+from .items.item import Item
 
 HIDEHUD_RADAR = 1 << 12
 # HIDEHUD_RADAR = 1 << 8

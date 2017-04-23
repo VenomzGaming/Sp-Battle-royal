@@ -1,15 +1,17 @@
 ## IMPORTS
 
+print('===== HERE AK =====')
+
 from entities.entity import Entity
 from entities.helpers import index_from_pointer
 from listeners.tick import Delay
 from messages import SayText2
 
-from . import Item
+from .weapon import Weapon
 from ..hooks import _authorize_weapon
 
 
-class Ak47(Item):
+class Ak47(Weapon):
     name = 'Ak47'
     item_type = 'weapon'
     clip = 0

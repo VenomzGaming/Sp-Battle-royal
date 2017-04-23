@@ -1,11 +1,11 @@
 ## IMPORTS
 
-from . import Item
+from .armor import Armor
 
 from messages import SayText2
 
 
-class Kevlar(Item):
+class Kevlar(Armor):
     name = 'Kevlar'
     armor = 100
     weight = 0

@@ -9,6 +9,5 @@ class Ammo(Item):
     clip = 0
     ammo = 10
 
-
     def use(self):
         SayText2('Can\'t use').send()

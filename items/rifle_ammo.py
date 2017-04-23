@@ -1,6 +1,6 @@
 ## IMPORTS
 
-from . import Ammo
+from .ammo import Ammo
 
 from messages import SayText2
 

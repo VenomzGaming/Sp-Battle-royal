@@ -2,7 +2,7 @@
 
 from messages import SayText2
 
-from ..items import Item
+from ..items.item import Item
 
 ## ALL DECLARATIONS
 

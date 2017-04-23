@@ -5,7 +5,7 @@ from filters.players import PlayerIter
 from messages import SayText2
 
 from .player import Player
-from ..items import Item
+from ..items.item import Item
 
 ## ALL DECLARATIONS
 

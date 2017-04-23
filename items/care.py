@@ -2,7 +2,7 @@
 
 from messages import SayText2
 
-from . import Item
+from .item import Item
 
 class Care(Item):
     item_type = 'care'

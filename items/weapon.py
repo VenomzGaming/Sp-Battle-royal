@@ -1,10 +1,12 @@
 ## IMPORTS
 
+print('===== HERE WEAPON =====')
+
 from entities.entity import Entity
 from entities.helpers import index_from_pointer
 from messages import SayText2
 
-from . import Item
+from .item import Item
 from ..hooks import _authorize_weapon
 
 

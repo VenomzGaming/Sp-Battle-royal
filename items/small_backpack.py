@@ -1,6 +1,6 @@
 ## IMPORTS
 
-from . import Item
+from .item import Item
 
 from messages import SayText2
 

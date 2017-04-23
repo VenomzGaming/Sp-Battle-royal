@@ -1,11 +1,11 @@
 ## IMPORTS
 
-from . import Item
+from .ammo import Ammo
 
 from messages import SayText2
 
 
-class Pistol_Ammo(Item):
+class Pistol_Ammo(Ammo):
     name = 'Pistol Ammo'
     weight = 0
     models = ''
