@@ -12,5 +12,5 @@ class Small_Backpack(Item):
     models = ''
 
 
-    def equip(self):
+    def use(self):
         SayText2('Equipe ' + self.classname).send()

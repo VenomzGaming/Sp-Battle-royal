@@ -3,6 +3,7 @@
 from entities.entity import Entity
 from filters.players import PlayerIter
 from messages import SayText2
+from mathlib import Vector
 
 from .player import Player
 from ..items.item import Item
@@ -38,6 +39,9 @@ class BattleRoyal:
 
     def add_item_ent(self, entity, item):
         self._items_ents[entity.index] = item
+
+    def remove_item_ent(self, entity):
+        del self._items_ents[entity.index]
 
     @property
     def players_backpack_ents(self):
@@ -75,10 +79,12 @@ class BattleRoyal:
 
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
-        # for index, item in self._items_ents.items():
-        #     entity = item.create(location)
-        #     self.add_item_ent(entity)
-        pass
+        for classname, cls in Item.get_subclass_dict().items():
+            if classname == 'Ak47':
+                item = cls()
+                entity = item.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
+                _battle_royal.add_item_ent(entity, item)
+    
 
     def spawn_players(self):
         # For the moment spawn player in random spawn on map (After spawn user with parachute)
@@ -103,7 +109,7 @@ class BattleRoyal:
         self.status = False
 
         # Remove all spawned entities
-        SayText2(str(self._items_ents)).send()
+        # SayText2(str(self._items_ents)).send()
         for index, item in self._items_ents.items():
             SayText2('Index : ' + str(index)).send()
             Entity(index).remove()
@@ -111,7 +117,7 @@ class BattleRoyal:
         self._items_ents.clear()
 
         # Remove all spawned backpack entities
-        SayText2(str(self._players_backpack_ents)).send()
+        # SayText2(str(self._players_backpack_ents)).send()
         for index, item in self._players_backpack_ents.items():
             Entity(index).remove()
 

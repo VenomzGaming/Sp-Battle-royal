@@ -28,9 +28,6 @@ class Item:
     def use(self):
         SayText2('Can\'t use').send()
 
-    def equip(self):
-        SayText2('Can\'t equip').send()
-
     def destroy(self):
         SayText2('Can\'t destroy').send()
 

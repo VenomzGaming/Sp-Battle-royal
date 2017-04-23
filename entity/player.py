@@ -53,9 +53,10 @@ class Player(SourcePythonPlayer):
             
         return True      
 
-    def drop(self, item):
-        self._inventory.drop(item)
+    def drop(self, item, amount=None):
+        self._inventory.remove(item, amount)
         # Re create and store entity
+        item.create(self.origin)
         SayText2(item.name + ' remove from inventory').send()
 
     def equip(self, item):

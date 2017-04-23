@@ -23,7 +23,7 @@ class Ak47(Weapon):
     #     entity.teleport(location)
     #     return entity
      
-    # def equip(self, player, callback):
+    # def use(self, player, callback):
     #     def delay_callback():
     #         weapon_pointer = player.give_named_item('weapon_ak47', 0, None, True)
     #         weapon = Entity(index_from_pointer(weapon_pointer))

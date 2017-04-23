@@ -10,6 +10,7 @@ from entities.hooks import EntityPreHook, EntityPostHook, EntityCondition
 from filters.players import PlayerIter
 from memory import make_object
 from messages import SayText2
+from weapons.entity import Weapon
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
 
@@ -51,13 +52,15 @@ def _on_weapon_bump(stack):
 
 @EntityPreHook(EntityCondition.is_human_player, 'drop_weapon')
 def _on_weapon_drop(stack):
-    pass
-    # player = make_object(Player, stack[0])
-    # entity = make_object(Entity, stack[1])
-    # brPlayer = _battle_royal.get_player[player.userid]
-    # SayText2(str(entity.classname)).send()
-    # item = _battle_royal.get_item_ent[entity.index]
-    # brPlayer.drop(item)
+    player = make_object(Player, stack[0])
+    entity = make_object(Entity, stack[1])
+    brPlayer = _battle_royal.get_player(player)
+    item = _battle_royal.get_item_ent(entity)
+    brPlayer.drop(item)
+    SayText2(str(_battle_royal.items_ents)).send()
+    _battle_royal.add_item_ent(entity)
+    SayText2(str(_battle_royal.items_ents)).send()
+
 
 @EntityPreHook(EntityCondition.equals_entity_classname('prop_physics_override'), 'use')
 @EntityPreHook(lambda entity: entity.classname.startswith('weapon_'), 'use')
@@ -75,8 +78,11 @@ def _on_pick_up_item(stack):
 
     if success:
         entity.remove()
+        SayText2(str(_battle_royal.items_ents)).send()
+        _battle_royal.remove_item_ent(entity)
+        SayText2(str(_battle_royal.items_ents)).send()
         # Refactor item code to make all items call by one function
-        item.equip(br_player)
+        item.use(br_player)
         SayText2('Take ' + br_player.name).send()
 
 

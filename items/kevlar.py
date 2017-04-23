@@ -12,5 +12,5 @@ class Kevlar(Armor):
     models = ''
 
 
-    def equip(self):
+    def use(self):
         SayText2('Equip ' + self.classname).send()

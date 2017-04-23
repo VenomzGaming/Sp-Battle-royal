@@ -32,19 +32,9 @@ def _on_warmup_start(event_data):
 def _on_round_start(event_data):
     SayText2('Round Start').send()
 
-    # ak = Ak47()
-    # entity = ak.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
-    # _battle_royal.add_item_ent(entity, ak)
-
-    # for cls in Item.get_subclass_dict().values():
-    #     SayText2(str(cls)).send()
-    #     SayText2(str(cls.get_subclass_dict())).send()
-    
-
     for player in PlayerIter('alive'):
         brPlayer = BrPlayer(player.index, 50)
         _battle_royal.add_player(brPlayer)
-        # _battle_royal.spawn_item(brPlayer)
 
         # edict = edict_from_index(player.index)
         # # Hide ennemy on radar 
