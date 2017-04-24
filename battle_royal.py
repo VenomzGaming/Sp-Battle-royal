@@ -27,15 +27,12 @@ def unload():
 # MAIN MENU
 @SayCommand(['battleroyal', 'br'])
 def _open_main_menu(command, index, team_only=None):
-    brPlayer = _battle_royal[Player(index).userid]
-    brPlayer.inventory.show()
+    main_menu.send()
 
 # INVENTORY MENU
 @SayCommand(['inventory', 'inv'])
 def _open_inventory_menu(command, index, team_only=None):
-    player = Player(index)
-    brPlayer = _battle_royal[player.userid]
-    brPlayer.inventory.show()
+    inventory_menu.send()
 
 
 ## COMMANDS

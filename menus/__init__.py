@@ -6,14 +6,14 @@ from menus import Text
 
 from ..entity.battleroyal import _battle_royal
 from ..entity.player import Player as BrPlayer
+from .inventory import inventory_menu
 
 __all__ = (
-	'main_menu'
+    'main_menu'
 )
 
 
 def _main_menu_build(menu, index):
-	brPlayer = _battle_royal[Player(index).userid]
     pass
 
 
@@ -29,7 +29,7 @@ main_menu = SimpleMenu(
         Text('Battle Royal'),
         Text(' '),
         SimpleOption(1, 'Inventory', inventory_menu),
-        SimpleOption(2, 'Rank', rank_menu),
+        SimpleOption(2, 'Rank', None),
         Text(' '),
         SimpleOption(9, 'Close', highlight=False),
     ],

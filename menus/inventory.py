@@ -3,39 +3,47 @@
 from menus import SimpleMenu
 from menus import SimpleOption
 from menus import Text
+from messages import SayText2
+from players.entity import Player
 
 from ..entity.battleroyal import _battle_royal
 from ..entity.player import Player as BrPlayer
+from ..menus.item import item_menu
 
 
 __all__ = (
-	'inventory_menu'
+    'inventory_menu'
 )
 
 
 def _inventory_menu_build(menu, index):
     menu.clear()
-    menu.title = 'Inventory'
-	brPlayer = _battle_royal[Player(index).userid]
-    i = 1
-    for item in brPlayer.inventory.items:
-        menu.append(SimpleOption(i, item.name, (item_menu, item)))
-        i += 1
+    brPlayer = _battle_royal.get_player(Player(index))
+    menu.append(Text('Inventory'))
+    
+    if len(brPlayer.inventory.items.values()) != 0:
+        i = 1
+        for item in brPlayer.inventory.items.values():
+            menu.append(SimpleOption(i, item.name, (item_menu, item)))
+            i += 1
+    else:
+        menu.append(Text('Empty inventory'))
 
-    menu.append(SimpleOption(7, 'Back', menu.previous_menu, highlight=False))
-    menu.append(SimpleOption(9, 'Close', highlight=False))
+    menu.append(Text(' '))
+    if hasattr(menu, 'previous_menu'):
+        menu.append(SimpleOption(7, 'Back', menu.previous_menu, highlight=True))
+    menu.append(SimpleOption(9, 'Close', highlight=True))
 
 
 def _inventory_menu_select(menu, index, choice):
     next_menu, item = choice.value
     if next_menu is not None:
         next_menu.item = item
-        next_menu.title = item.name
         next_menu.previous_menu = menu
         return next_menu
 
 
 inventory_menu = SimpleMenu(
-    build_callback=_main_menu_build,
-    select_callback=_main_menu_select
+    build_callback=_inventory_menu_build,
+    select_callback=_inventory_menu_select
 )
