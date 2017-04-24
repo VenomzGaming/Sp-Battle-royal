@@ -17,6 +17,10 @@ class Inventory:
         self.player = player
         self._items = dict()
 
+    @property
+    def items(self):
+        return self._items
+
     def _can_add(self, item):
         return True if (self.player.total_weight - item.weight) > 0 else False
 
