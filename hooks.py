@@ -8,11 +8,13 @@ from entities.datamaps import InputData
 from entities.helpers import edict_from_pointer
 from entities.hooks import EntityPreHook, EntityPostHook, EntityCondition
 from filters.players import PlayerIter
+from listeners import OnTick
 from memory import make_object
 from messages import SayText2
 from weapons.entity import Weapon
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
+
 
 
 from .entity.battleroyal import _battle_royal
@@ -39,6 +41,16 @@ def _on_join_team(command, index):
     return CommandReturn.BLOCK
 
 
+# TICK LISTENER
+
+@OnTick
+def _on_tick():
+    # Add sending HudMsg
+    
+    # Find a way to hide question mark on radar
+    for player in PlayerIter('alive'):
+        player.set_property_bool("m_bPlayerSpotted ", False)
+        
 # MANAGE HOOK
 
 @EntityPreHook(EntityCondition.is_human_player, 'bump_weapon')
@@ -53,6 +65,7 @@ def _on_weapon_bump(stack):
 @EntityPreHook(EntityCondition.is_human_player, 'drop_weapon')
 def _on_weapon_drop(stack):
     player = make_object(Player, stack[0])
+    SayText2('Entity ' + str(stack[1])).send()
     entity = make_object(Entity, stack[1])
     brPlayer = _battle_royal.get_player(player)
     item = _battle_royal.get_item_ent(entity)
