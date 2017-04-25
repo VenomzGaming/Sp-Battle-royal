@@ -16,9 +16,8 @@ from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
 
 
-
 from .entity.battleroyal import _battle_royal
-from .globals import _authorize_weapon
+from .globals import _authorize_weapon, _match_hud
 
 ## MANAGE TEAM
 
@@ -46,10 +45,11 @@ def _on_join_team(command, index):
 @OnTick
 def _on_tick():
     # Add sending HudMsg
+    _match_hud.send()
     
     # Find a way to hide question mark on radar
     for player in PlayerIter('alive'):
-        player.set_property_bool("m_bPlayerSpotted ", False)
+        player.set_property_bool("m_bSpotted", False)
         
 # MANAGE HOOK
 

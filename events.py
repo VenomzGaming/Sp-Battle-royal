@@ -19,8 +19,8 @@ from .entity.player import Player as BrPlayer
 from .items.item import Item
 from .utils.utils import show_match_hud
 
-HIDEHUD_RADAR = 1 << 12
-# HIDEHUD_RADAR = 1 << 8
+
+# HIDEHUD_RADAR = 1 << 12
 
 
 @Event('round_announce_warmup')
@@ -69,6 +69,9 @@ def _on_kill_events(event_data):
     victim = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
     SayText2(str(attacker)).send()
     SayText2(str(victim)).send()
+
+    # Update Match Hud
+    show_match_hud()
 
     # Add player to dead
     _battle_royal.remove_player(victim)
