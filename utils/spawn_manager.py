@@ -8,15 +8,16 @@ from path import PLUGIN_DATA_PATH
 
 class SpawnManager(dict):
 
-    def __init__(self, path):
+    def __init__(self, name, path):
+        self._name = name
         self.load_location(path)
     
     def __setitem__(self, name, location):
         if name in self:
             raise KeyError(
-                'Cannot assign a new {name} to {class_name}.'.format(
-                    name=self._name,
-                    class_name=class_name,
+                'Cannot assign a new {type} to {name}.'.format(
+                    type=self._name,
+                    name=name,
                 )
             )
 

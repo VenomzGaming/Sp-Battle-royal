@@ -83,12 +83,12 @@ class BattleRoyal:
 
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
-        # item_spawner = SpawnManager('items_location/' + global_vars.map_name)
+        # item_spawner = SpawnManager('item', 'items_spawn/' + global_vars.map_name)
         # locations = item_spawner.get_locations
         for classname, cls in Item.get_subclass_dict().items():
             if classname == 'Ak47':
                 item = cls()
-                # vector = random.choice(locations)
+                # vector = random.choice(loca'item', tions)
                 # entity = item.create(vector)
                 # item_spawner.remove_location(None, vector)
                 entity = item.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
@@ -98,7 +98,7 @@ class BattleRoyal:
     def spawn_players(self):
         # For the moment spawn player in random spawn on map (After spawn user with parachute)
         pass
-        # player_spawner = SpawnManager('items_location/' + global_vars.map_name)
+        # player_spawner = SpawnManager('player', 'player_spawn/' + global_vars.map_name)
         # locations = player_spawner.get_locations
         # for player in PlayerIter('alive'):
         #     vector = random.choice(locations)
