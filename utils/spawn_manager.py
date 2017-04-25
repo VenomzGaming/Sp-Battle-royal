@@ -1,16 +1,19 @@
 ## IMPORTS
 
 import json
+import os
 
 from mathlib import Vector
-from path import PLUGIN_DATA_PATH
+from path import Path, PLUGIN_DATA_PATH
 
 
 class SpawnManager(dict):
 
     def __init__(self, name, path):
+        super().__init__()
         self._name = name
-        self.load_location(path)
+        self._path = Path(path)
+        self._load_location()
     
     def __setitem__(self, name, location):
         if name in self:
@@ -30,20 +33,33 @@ class SpawnManager(dict):
     def get_locations(self):
         return list(self.values())
 
-    def load_location(self, path):
-        if path.find('.json') == -1:
+    def _load_location(self):
+        self[self._name].clear()
+
+        if self._path.find('.json') == -1:
             raise ValueError(
                 'Path of location must be an Json file.'
             )
 
-        with open(PLUGIN_DATA_PATH / path) as data_json:    
-            data = json.load(data_json)
+        if not self._path.exists():
+            with self._path.open('w') as file:
+                json.dump({}, file)
 
-        for name, location in data:
-            self.add_location(name, location)
+        with open(PLUGIN_DATA_PATH / self._path) as data_json:    
+            for name, value in json.load(data_json).items():
+                self[name] = value
+
+    def _save_location(self):
+        with self._path.open('w') as data_json:
+            temp_dict = {}
+            for name, location in self.items():
+                temp_dict[name] = location
+
+            json.dump(temp_dict, data_json, indent=4, sort_keys=True)
 
     def add(self, name, value):
         self[name] = value
+        self._save_location()
 
     def remove(self, name=None, value=None):
         if value is not None:
