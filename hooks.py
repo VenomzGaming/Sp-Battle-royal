@@ -15,9 +15,9 @@ from weapons.entity import Weapon
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
 
-
 from .entity.battleroyal import _battle_royal
 from .globals import _authorize_weapon, _match_hud
+from .menus.backpack import backpack_menu
 
 ## MANAGE TEAM
 
@@ -91,12 +91,27 @@ def _on_pick_up_item(stack):
 
     if success:
         entity.remove()
-        SayText2(str(_battle_royal.items_ents)).send()
         _battle_royal.remove_item_ent(entity)
-        SayText2(str(_battle_royal.items_ents)).send()
         # Refactor item code to make all items call by one function
         item.use(br_player)
         SayText2('Take ' + br_player.name).send()
+
+
+@EntityPreHook(EntityCondition.equals_entity_classname('prop_backpack'), 'use')
+def _on_pick_up_backpack(stack):
+    entity = make_object(Entity, stack[0])
+    input_data = make_object(InputData, stack[1])
+    player = make_object(Player, input_data.activator)
+
+    if player is None or _battle_royal.status != True or entity.index not in _battle_royal.items_ents:
+        return
+
+    br_player = _battle_royal.get_player(player)
+    backpack = _battle_royal.get_item_ent(entity)
+    SayText2('Take backpack ' + br_player.name).send()
+    backpack_menu.entity = entity
+    backpack_menu.backpack = backpack
+    backpack_menu.send()
 
 
 @EntityPreHook(EntityCondition.is_player, 'on_take_damage')

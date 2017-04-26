@@ -10,7 +10,3 @@ class Healthshot(Weapon):
     item_type = 'weapon'
     weight = 0
     models = ''
-
-
-    def equip(self):
-        SayText2('Equip ' + self.classname).send()

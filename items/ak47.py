@@ -15,20 +15,3 @@ class Ak47(Weapon):
     clip = 0
     ammo = 0
     weight = 20
-
-
-    # def create(self, location):
-    #     entity = Entity.create('weapon_ak47')
-    #     entity.spawn()
-    #     entity.teleport(location)
-    #     return entity
-     
-    # def use(self, player, callback):
-    #     def delay_callback():
-    #         weapon_pointer = player.give_named_item('weapon_ak47', 0, None, True)
-    #         weapon = Entity(index_from_pointer(weapon_pointer))
-    #         # Empty clip and ammo
-    #         _authorize_weapon.append(index_from_pointer(weapon_pointer))
-    #         callback(player, weapon)
-     
-    #     player.delay(0, delay_callback)

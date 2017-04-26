@@ -14,6 +14,7 @@ class Item:
     item_type = ''
     description = ''
     models = None
+    amount = 1
     weight = 0
 
     def create(self, location):

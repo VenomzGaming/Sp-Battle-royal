@@ -22,13 +22,13 @@ class Inventory:
         return self._items
 
     def _can_add(self, item):
-        return True if (self.player.total_weight - item.weight) > 0 else False
+        return True if (self.player.total_weight - (item.weight * item.amount)) > 0 else False
 
     def _add_weight(self, item):
-        self.player.total_weight -= item.weight
+        self.player.total_weight -= (item.weight * item.amount)
 
     def _remove_weight(self, item):
-        self.player.total_weight += item.weight
+        self.player.total_weight += (item.weight * item.amount)
 
     def add(self, item):
         if not isinstance(item, Item):
@@ -42,9 +42,9 @@ class Inventory:
             item.amount = 1
             self._items[item.name] = item
         else:
-            item = self._items[item.name]
-            item.amount += 1
-            self._items[item.name] = item
+            player_item = self._items[item.name]
+            player_item.amount += item.amount
+            self._items[item.name] = player_item
 
         self._add_weight(item)
         return True
@@ -69,9 +69,3 @@ class Inventory:
             SayText2('Remove').send()
 
         self._remove_weight(item) 
-              
-    def show(self):
-        for item in self._items.values():
-            SayText2(item.name).send()
-        else:
-            SayText2('Any').send()

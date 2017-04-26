@@ -24,7 +24,7 @@ def _inventory_menu_build(menu, index):
     if len(brPlayer.inventory.items.values()) != 0:
         i = 1
         for item in brPlayer.inventory.items.values():
-            menu.append(SimpleOption(i, item.name, (item_menu, item)))
+            menu.append(SimpleOption(i, item.name + ' (x'+str(item.amount)+')', (item_menu, item)))
             i += 1
     else:
         menu.append(Text('Empty inventory'))
