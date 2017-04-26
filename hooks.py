@@ -16,7 +16,9 @@ from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
 
 from .entity.battleroyal import _battle_royal
+from .entity.inventory import Inventory
 from .globals import _authorize_weapon, _match_hud
+from .items.item import Item
 from .menus.backpack import backpack_menu
 
 ## MANAGE TEAM
@@ -45,7 +47,8 @@ def _on_join_team(command, index):
 @OnTick
 def _on_tick():
     # Add sending HudMsg
-    _match_hud.send()
+    if _match_hud is not None:
+        _match_hud.send()
     
     # Find a way to hide question mark on radar
     for player in PlayerIter('alive'):
@@ -65,14 +68,22 @@ def _on_weapon_bump(stack):
 @EntityPreHook(EntityCondition.is_human_player, 'drop_weapon')
 def _on_weapon_drop(stack):
     player = make_object(Player, stack[0])
-    SayText2('Entity ' + str(stack[1])).send()
-    entity = make_object(Entity, stack[1])
+
+    try:
+        entity = make_object(Entity, stack[1])
+    except ValueError:
+        return
+
     brPlayer = _battle_royal.get_player(player)
-    item = _battle_royal.get_item_ent(entity)
-    brPlayer.drop(item)
-    SayText2(str(_battle_royal.items_ents)).send()
-    _battle_royal.add_item_ent(entity)
-    SayText2(str(_battle_royal.items_ents)).send()
+    weapon_name = str(entity.classname).split('_')[1]
+    item = Item.get_subclass_dict()[weapon_name.title()]()
+    SayText2('Item ' + str(item.name)).send()
+    # Find why it crashed (when creating entity)
+    # entity = brPlayer.drop(item)
+    # SayText2('DROP : ' + str(entity.index)).send()
+    # SayText2(str(_battle_royal.items_ents)).send()
+    # _battle_royal.add_item_ent(entity)
+    # SayText2(str(_battle_royal.items_ents)).send()
 
 
 @EntityPreHook(EntityCondition.equals_entity_classname('prop_physics_override'), 'use')
@@ -87,31 +98,21 @@ def _on_pick_up_item(stack):
 
     br_player = _battle_royal.get_player(player)
     item = _battle_royal.get_item_ent(entity)
-    success = br_player.pick_up(item)
-
-    if success:
-        entity.remove()
-        _battle_royal.remove_item_ent(entity)
-        # Refactor item code to make all items call by one function
-        item.use(br_player)
-        SayText2('Take ' + br_player.name).send()
-
-
-@EntityPreHook(EntityCondition.equals_entity_classname('prop_backpack'), 'use')
-def _on_pick_up_backpack(stack):
-    entity = make_object(Entity, stack[0])
-    input_data = make_object(InputData, stack[1])
-    player = make_object(Player, input_data.activator)
-
-    if player is None or _battle_royal.status != True or entity.index not in _battle_royal.items_ents:
-        return
-
-    br_player = _battle_royal.get_player(player)
-    backpack = _battle_royal.get_item_ent(entity)
-    SayText2('Take backpack ' + br_player.name).send()
-    backpack_menu.entity = entity
-    backpack_menu.backpack = backpack
-    backpack_menu.send()
+    
+    if isinstance(item, Inventory):
+        SayText2('Take backpack ' + br_player.name).send()
+        backpack_menu.entity = entity
+        backpack_menu.backpack = item
+        backpack_menu.send()
+    else:
+        success = br_player.pick_up(item)
+        if success:
+            entity.remove()
+            _battle_royal.remove_item_ent(entity)
+            # Refactor item code to 
+            # make all items call by one function
+            item.use(br_player)
+            SayText2('Take ' + br_player.name).send()
 
 
 @EntityPreHook(EntityCondition.is_player, 'on_take_damage')

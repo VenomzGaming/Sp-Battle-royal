@@ -4,15 +4,22 @@ import json
 import os
 
 from mathlib import Vector
-from path import Path, PLUGIN_DATA_PATH
+from path import Path
+from paths import PLUGIN_DATA_PATH
+
+
+LOCATION_PATH = {
+    'item' : 'items_spawn',
+    'player' : 'players_spawn'
+}
 
 
 class SpawnManager(dict):
 
-    def __init__(self, name, path):
+    def __init__(self, name, map_name):
         super().__init__()
         self._name = name
-        self._path = Path(path)
+        self._path = Path(LOCATION_PATH[name] + '/' + map_name)
         self._load_location()
     
     def __setitem__(self, name, location):
@@ -51,16 +58,13 @@ class SpawnManager(dict):
 
     def _save_location(self):
         with self._path.open('w') as data_json:
-            temp_dict = {}
-            for name, location in self.items():
-                temp_dict[name] = location
-
-            json.dump(temp_dict, data_json, indent=4, sort_keys=True)
+            json.dump(self, data_json, indent=4, sort_keys=True)
 
     def add(self, name, value):
         self[name] = value
         self._save_location()
 
+    # Useless for the moment
     def remove(self, name=None, value=None):
         if value is not None:
             for key, val in self.items():

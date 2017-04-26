@@ -1,10 +1,11 @@
 ## IMPORTS
 
+from engines.precache import Model
+from entities.entity import Entity
 from messages import SayText2
 from players.entity import Player as SourcePythonPlayer
 
 
-from .entity.battleroyal import _battle_royal
 from .inventory import Inventory
 
 ## ALL DECLARATIONS
@@ -46,11 +47,11 @@ class Player(SourcePythonPlayer):
 
     def drop_inventory(self):
         SayText2('Drop inventory').send()
-        entity = Entity.create('prop_backpack')
+        entity = Entity.create('prop_physics_override')
         entity.spawn()
-        entity.world_model_index = Model('backapack').index
+        entity.world_model_index = Model(self.model).index
         entity.teleport(self.origin)
-        _battle_royal.add_item_ent(entity, self._inventory)
+        return entity
 
     def pick_up(self, item):
         add = self._inventory.add(item)
@@ -61,8 +62,7 @@ class Player(SourcePythonPlayer):
 
     def drop(self, item, amount=None):
         self._inventory.remove(item, amount)
-        # Re create and store entity
         entity = item.create(self.origin)
-        _battle_royal.add_item_ent(entity, item)
         SayText2(item.name + ' remove from inventory').send()
+        return entity
         

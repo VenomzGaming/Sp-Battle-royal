@@ -2,6 +2,7 @@
 
 from commands import CommandReturn
 from commands.say import SayCommand
+from commands.typed import TypedSayCommand
 from cvars import ConVar
 from messages import SayText2
 from players.entity import Player
@@ -9,10 +10,12 @@ from players.entity import Player
 from .entity.battleroyal import _battle_royal
 from .entity.player import Player as BrPlayer
 from .events import *
+from .globals import _items_spawn_manager, _players_spawn_manager
 from .hooks import *
 from .info import info
 from .menus import main_menu
 from .menus.inventory import inventory_menu
+
 
 def load():
     pass
@@ -50,7 +53,17 @@ def _open_inventory(command, index, team_only=None):
     SayText2('Show map').send()
 
 # ADD SPAWN POINT ADMIN COMMAND
-@SayCommand('location')
-def _open_inventory(command, index, team_only=None):
-    player = Player(index)
+# @SayCommand('location')
+# def _open_inventory(command, index, team_only=None):
+#     player = Player(index)
+#     SayText2(str(player.view_vector)).send()
+
+@TypedSayCommand('location')
+def typed_add_location(command_info, type_spawn:str):
+    player = Player(command_info.index)
+    vector = player.view_vector
+    # if type_spawn == 'item':
+    #     _items_spawn_manager.add(type_spawn, vector)
+    # else:
+    #     _players_spawn_manager.add(type_spawn, vector)
     SayText2(str(player.view_vector)).send()
