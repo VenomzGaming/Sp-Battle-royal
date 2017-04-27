@@ -84,16 +84,24 @@ class BattleRoyal:
 
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
-        # _items_spawn_manager = SpawnManager('item', global_vars.map_name)
-        # locations = _items_spawn_manager.get_locations
-        for classname, cls in Item.get_subclass_dict().items():
-            if classname == 'Ak47':
+        _items_spawn_manager = SpawnManager('item', global_vars.map_name)
+        locations = _items_spawn_manager.get_locations
+        if len(locations) != 0:
+            for classname, cls in Item.get_subclass_dict().items():
+                SayText2('Class ' + classname).send()
+                if classname in ['Weapon', 'Ammo', 'Armor', 'Care']:
+                    pass
+
+                if len(locations) == 0:
+                    break
                 item = cls()
-                # vector = random.choice(locations)
-                # entity = item.create(vector)
-                # locations.remove(vector)
-                entity = item.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
+                vector = random.choice(locations)
+                entity = item.create(vector)
+                locations.remove(vector)
+                # entity = item.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
                 _battle_royal.add_item_ent(entity, item)
+        else:
+            SayText2('Nothing').send()
     
 
     def spawn_players(self):

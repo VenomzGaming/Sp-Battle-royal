@@ -16,14 +16,15 @@ class Item:
     models = None
     amount = 1
     weight = 0
-    models = 'models/props/coop_cementplant/coop_military_crate/coop_military_crate.mdl'
+    models = 'models/props/coop_cementplant/coop_ammo_stash/coop_ammo_stash_empty.mdl'
 
     def create(self, location):
         entity = Entity.create('prop_physics_override')
-        entity.spawn()
+        entity.origin = location
         if self.models is not None:
-            entity.world_model_index = Model(self.models).index
-        entity.teleport(location)
+            entity.model = Model(self.models)
+        entity.spawn_flags = 265
+        entity.spawn()
         SayText2('Create entity').send()
         return entity
 

@@ -8,11 +8,13 @@ class Ammo(Item):
     item_type = 'ammo'
     clip = 0
     ammo = 10
+    slot = ''
+    tag = ''
     models = 'models/props/coop_cementplant/coop_ammo_stash/coop_ammo_stash_full.mdl'
 
     def use(self, player):
     	weapon = player.get_weapon(self.slot)
-    	if weapon is not None and self.type in weapon.tags:
+    	if weapon is not None and self.tag in weapon.tags:
     		if self.clip != 0:
     			weapon.clip += self.clip
     		weapon.ammo += self.ammo

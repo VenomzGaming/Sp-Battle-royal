@@ -13,6 +13,7 @@ class Weapon(Item):
     item_type = 'weapon'
 
     def create(self, location):
+        SayText2(str(self)).send()
         weapon_name = 'weapon_' + self.__class__.__name__.lower()
         entity = Entity.create(weapon_name)
         entity.spawn()

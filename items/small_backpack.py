@@ -13,6 +13,6 @@ class Small_Backpack(Item):
 
 
     def use(self, player):
-    	player.backpack = self
-    	playaer.total_weight += self.add_weight
+        player.backpack = self
+        player.total_weight += self.add_weight
         SayText2('Equip ' + self.classname).send()

@@ -62,8 +62,8 @@ def _open_inventory(command, index, team_only=None):
 def typed_add_location(command_info, type_spawn:str, name:str):
     player = Player(command_info.index)
     vector = player.view_vector
-    if type_spawn == 'item':
-        _items_spawn_manager.add(name, vector)
-    else:
-        _players_spawn_manager.add(name, vector)
+    # if type_spawn == 'item':
+    #     _items_spawn_manager.add(name, vector)
+    # else:
+    #     _players_spawn_manager.add(name, vector)
     SayText2(str(player.view_vector)).send()
