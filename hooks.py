@@ -53,7 +53,8 @@ def _on_tick():
     # Find a way to hide question mark on radar
     for player in PlayerIter('alive'):
         player.set_property_bool("m_bSpotted", False)
-        
+ 
+
 # MANAGE HOOK
 
 @EntityPreHook(EntityCondition.is_human_player, 'bump_weapon')
@@ -108,15 +109,32 @@ def _on_pick_up_item(stack):
         success = br_player.pick_up(item)
         if success:
             entity.remove()
+
+            if item.item_type == 'backpack' and item.add_weight > player.backpack.add_weight:
+                item.use(br_player)
+
             _battle_royal.remove_item_ent(entity)
             # Refactor item code to 
             # make all items call by one function
-            item.use(br_player)
+            if item.item_type in ['weapon', 'ammo']:
+                item.use(br_player)
+
             SayText2('Take ' + br_player.name).send()
 
 
 @EntityPreHook(EntityCondition.is_player, 'on_take_damage')
 def _pre_damage_events(stack_data):
+    take_damage_info = make_object(TakeDamageInfo, stack_data[1])
+
+    if not take_damage_info.attacker:
+        return
+
+    entity = Entity(take_damage_info.attacker)
+    attacker = _battle_royal.get_player(userid_from_index(entity.index)) if entity.is_player() else None
+    victim = _battle_royal.get_player(userid_from_pointer(stack_data[0]))
+    SayText2('Attacker Hook : ' + str(attacker)).send()
+    SayText2('Victim Hook : ' + str(victim)).send()
+    # Maybe add destroy armor before damaging player if sht is in head or body
     # Add hit marker on hit
     pass
             

@@ -7,9 +7,6 @@ from messages import SayText2
 
 class Rifle_Ammo(Ammo):
     name = 'Rifle Ammo'
+    slot = 'primary'
+    tag = 'rifle'
     weight = 0
-    models = ''
-
-
-    def use(self):
-        SayText2('Use ' + self.classname).send()

@@ -16,6 +16,7 @@ class Item:
     models = None
     amount = 1
     weight = 0
+    models = 'models/props/coop_cementplant/coop_military_crate/coop_military_crate.mdl'
 
     def create(self, location):
         entity = Entity.create('prop_physics_override')

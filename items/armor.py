@@ -8,5 +8,6 @@ class Armor(Item):
     item_type = 'armor'
     armor = 0
 
-    def use(self):
-        SayText2('Can\'t use').send()
+    def use(self, player):
+        player.armor = self.armor
+        SayText2('Add armor').send()

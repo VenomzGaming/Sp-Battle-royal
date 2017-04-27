@@ -9,4 +9,3 @@ class Healthshot(Weapon):
     name = 'Health shot'
     item_type = 'weapon'
     weight = 0
-    models = ''

@@ -62,6 +62,11 @@ class Player(SourcePythonPlayer):
 
     def drop(self, item, amount=None):
         self._inventory.remove(item, amount)
+        if item.item_type == 'weapon':
+            weapon = self.get_weapon('weapon_' + item.classname.lower())
+            if weapon is not None:
+                weapon.remove()
+                
         entity = item.create(self.origin)
         SayText2(item.name + ' remove from inventory').send()
         return entity

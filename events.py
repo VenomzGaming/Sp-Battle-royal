@@ -56,8 +56,6 @@ def _on_round_end(event_data):
 @Event('player_spawn')
 def _on_player_spawn(event_data):
     player = Player(index_from_userid(event_data['userid']))
-    # for x in player.properties:
-    #     print(x)
 
 
 @Event('player_death')

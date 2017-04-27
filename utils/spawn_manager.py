@@ -41,7 +41,7 @@ class SpawnManager(dict):
         return list(self.values())
 
     def _load_location(self):
-        self[self._name].clear()
+        self.clear()
 
         if self._path.find('.json') == -1:
             raise ValueError(
