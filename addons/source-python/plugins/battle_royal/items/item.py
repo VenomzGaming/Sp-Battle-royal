@@ -25,7 +25,6 @@ class Item:
             entity.model = Model(self.models)
         entity.spawn_flags = 265
         entity.spawn()
-        SayText2('Create entity').send()
         return entity
 
     def use(self):

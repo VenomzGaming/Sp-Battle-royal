@@ -4,11 +4,12 @@ from commands import CommandReturn
 from commands.client import ClientCommand
 from entities import TakeDamageInfo
 from entities.entity import Entity
+from entities.constants import DamageTypes
 from entities.datamaps import InputData
 from entities.helpers import edict_from_pointer
 from entities.hooks import EntityPreHook, EntityPostHook, EntityCondition
 from filters.players import PlayerIter
-from listeners import OnTick
+from listeners import OnTick, OnEntityCreated, OnEntityDeleted
 from memory import make_object
 from messages import SayText2
 from weapons.entity import Weapon
@@ -17,9 +18,10 @@ from players.helpers import index_from_userid, userid_from_index, userid_from_po
 
 from .entity.battleroyal import _battle_royal
 from .entity.inventory import Inventory
-from .globals import _authorize_weapon, _match_hud
+from .globals import _authorize_weapon
 from .items.item import Item
 from .menus.backpack import backpack_menu
+from .utils import BattleRoyalHud
 
 ## MANAGE TEAM
 
@@ -48,12 +50,30 @@ def _on_join_team(command, index):
 def _on_tick():
     # Add sending HudMsg
     if _match_hud is not None:
-        _match_hud.send()
+        # _match_hud.send()
+        BattleRoyalHud.match_hud.send()
     
     # Find a way to hide question mark on radar
     for player in PlayerIter('alive'):
         player.set_property_bool("m_bSpotted", False)
- 
+        BattleRoyalHud.player_weight(player)
+
+
+@OnEntityCreated
+def _on_entity_create(entity):
+    SayText2(
+        'Entity {} has been created !'.format(entity.index)
+    ).send()
+
+
+@OnEntityDeleted
+def _on_entity_delete(entity):
+    item = _battle_royal.get_item_ent(entity)
+    SayText2(
+        'Entity {} Item {} has been removed !'.format(entity.index, item.name)
+    ).send()
+    _battle_royal.remove_item_ent(entity)
+
 
 # MANAGE HOOK
 
@@ -109,17 +129,15 @@ def _on_pick_up_item(stack):
         success = br_player.pick_up(item)
         if success:
             entity.remove()
+            # _battle_royal.remove_item_ent(entity)
 
             if item.item_type == 'backpack' and item.add_weight > player.backpack.add_weight:
                 item.use(br_player)
 
-            _battle_royal.remove_item_ent(entity)
-            # Refactor item code to 
-            # make all items call by one function
             if item.item_type in ['weapon', 'ammo']:
                 item.use(br_player)
 
-            SayText2('Take ' + br_player.name).send()
+            SayText2(br_player.name + ' take item ' + item.name).send()
 
 
 @EntityPreHook(EntityCondition.is_player, 'on_take_damage')
@@ -134,7 +152,11 @@ def _pre_damage_events(stack_data):
     victim = _battle_royal.get_player(userid_from_pointer(stack_data[0]))
     SayText2('Attacker Hook : ' + str(attacker)).send()
     SayText2('Victim Hook : ' + str(victim)).send()
+
     # Maybe add destroy armor before damaging player if sht is in head or body
-    # Add hit marker on hit
-    pass
+    if victim.armor > 0:
+        take_damage_info.damage = victim.armor - take_damage_info.damage
+
+    # Add hit marker on hit (maybe color in function of hit armor or health)
+    BattleRoyalHud.hitmarker(attacker)
             

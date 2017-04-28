@@ -6,6 +6,7 @@ from commands.typed import TypedSayCommand
 from cvars import ConVar
 from messages import SayText2
 from players.entity import Player
+from stringtables.downloads import Downloadables
 
 from .entity.battleroyal import _battle_royal
 from .entity.player import Player as BrPlayer
@@ -23,6 +24,12 @@ def load():
 
 def unload():
     pass
+
+
+## DOWNLOAD
+
+downloadables = Downloadables()
+downloadables.add_directory('materials/overlays/battle_royal')
 
 
 ## MENUS
