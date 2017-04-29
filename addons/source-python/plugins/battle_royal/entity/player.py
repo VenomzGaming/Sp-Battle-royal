@@ -56,8 +56,7 @@ class Player(SourcePythonPlayer):
     def pick_up(self, item):
         add = self._inventory.add(item)
         if not add:
-            return False
-            
+            return False     
         return True      
 
     def drop(self, item, amount=None):
@@ -70,4 +69,12 @@ class Player(SourcePythonPlayer):
         entity = item.create(self.origin)
         SayText2(item.name + ' remove from inventory').send()
         return entity
+
+    def use(self, item):
+        item.use(self)
+        if item.item_type == 'ammo':
+            self._inventory.remove(item) 
+        else:
+            self._inventory.remove(item, 1) 
+        
         

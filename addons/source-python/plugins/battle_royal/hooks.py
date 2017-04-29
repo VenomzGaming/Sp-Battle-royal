@@ -21,7 +21,7 @@ from .entity.inventory import Inventory
 from .globals import _authorize_weapon
 from .items.item import Item
 from .menus.backpack import backpack_menu
-from .utils import BattleRoyalHud
+from .utils.utils import BattleRoyalHud
 
 ## MANAGE TEAM
 
@@ -49,28 +49,33 @@ def _on_join_team(command, index):
 @OnTick
 def _on_tick():
     # Add sending HudMsg
-    if _match_hud is not None:
-        # _match_hud.send()
-        BattleRoyalHud.match_hud.send()
+    # if _match_hud is not None:
+    # if not _battle_royal.status: 
+    #     return
+
+    BattleRoyalHud.match_info()
     
     # Find a way to hide question mark on radar
     for player in PlayerIter('alive'):
         player.set_property_bool("m_bSpotted", False)
-        BattleRoyalHud.player_weight(player)
+        # BattleRoyalHud.player_weight(player)
 
 
-@OnEntityCreated
-def _on_entity_create(entity):
-    SayText2(
-        'Entity {} has been created !'.format(entity.index)
-    ).send()
+# @OnEntityCreated
+# def _on_entity_create(entity):
+#     SayText2(
+#         'Entity {} has been created !'.format(entity.index)
+#     ).send()
 
 
 @OnEntityDeleted
 def _on_entity_delete(entity):
     item = _battle_royal.get_item_ent(entity)
+    if item is None:
+        return
+
     SayText2(
-        'Entity {} Item {} has been removed !'.format(entity.index, item.name)
+        'Entity {} Item {} has been removed !'.format(entity.index, item.name.title())
     ).send()
     _battle_royal.remove_item_ent(entity)
 
@@ -89,16 +94,18 @@ def _on_weapon_bump(stack):
 @EntityPreHook(EntityCondition.is_human_player, 'drop_weapon')
 def _on_weapon_drop(stack):
     player = make_object(Player, stack[0])
-
+    br_player = _battle_royal.get_player(player)
     try:
         entity = make_object(Entity, stack[1])
     except ValueError:
         return
-
-    brPlayer = _battle_royal.get_player(player)
     weapon_name = str(entity.classname).split('_')[1]
-    item = Item.get_subclass_dict()[weapon_name.title()]()
-    SayText2('Item ' + str(item.name)).send()
+    if weapon_name == 'healthshot':
+        item = Item.get_subclass_dict()[weapon_name.title()]()
+        br_player.inventory.remove(item, 1)
+    else:
+        return False
+    # SayText2('Item ' + str(item.name)).send()
     # Find why it crashed (when creating entity)
     # entity = brPlayer.drop(item)
     # SayText2('DROP : ' + str(entity.index)).send()

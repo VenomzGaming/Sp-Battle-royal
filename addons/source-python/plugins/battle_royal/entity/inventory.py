@@ -49,6 +49,10 @@ class Inventory:
         self._add_weight(item)
         return True
 
+    def _remove_item(self, item):
+        del self._items[item.name]
+        SayText2('Remove').send()
+
     def remove(self, item, amount=None):
         if not isinstance(item, Item):
             raise ValueError('Argument must be an Item')
@@ -58,14 +62,15 @@ class Inventory:
 
         if amount is not None:
             if amount > item.amount:
-                del self._items[item.name]
-                SayText2('Remove').send()
+                self._remove_item(item)
             else:
                 item.amount -= amount
-                self._items[item.name] = item
-                SayText2('Remove Amount').send()
+                if item.amount == 0:
+                    self._remove_item(item)
+                else:
+                    self._items[item.name] = item
+                    SayText2('Remove Amount').send()
         else:
-            del self._items[item.name]
-            SayText2('Remove').send()
+            self._remove_item(item)
 
         self._remove_weight(item) 

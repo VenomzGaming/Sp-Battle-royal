@@ -88,14 +88,14 @@ class BattleRoyal:
         locations = _items_spawn_manager.get_locations
         if len(locations) != 0:
             for classname, cls in Item.get_subclass_dict().items():
-                SayText2('Class ' + classname).send()
-                if classname in ['Weapon', 'Ammo', 'Armor', 'Care']:
-                    pass
-
                 if len(locations) == 0:
                     break
+                if classname in ['Weapon', 'Ammo', 'Armor', 'Care']:
+                    continue
+
                 item = cls()
                 vector = random.choice(locations)
+                SayText2('Create ' + classname).send()
                 entity = item.create(vector)
                 locations.remove(vector)
                 # entity = item.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
@@ -134,11 +134,12 @@ class BattleRoyal:
 
         # Remove all spawned entities
         SayText2('SPAWNED ENT : ' + str(self._items_ents)).send()
-        for index, item in self._items_ents.items():
+        all_entities = self._items_ents.items()
+        for index, item in all_entities:
             SayText2('Index : ' + str(index)).send()
             Entity(index).remove()
 
-        self._items_ents.clear()
+        # self._items_ents.clear()
 
         # Remove all spawned backpack entities
         # SayText2(str(self._players_backpack_ents)).send()

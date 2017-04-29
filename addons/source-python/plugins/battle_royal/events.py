@@ -46,7 +46,7 @@ def _on_round_start(event_data):
 
     _battle_royal.start()
     # show_match_hud()
-    BattleRoyalHud.match_info()
+    # BattleRoyalHud.match_info()
 
 
 @Event('round_end')

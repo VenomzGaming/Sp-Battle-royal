@@ -4,9 +4,10 @@ from cvars import ConVar
 from filters.players import PlayerIter
 from messages import HudMsg, SayText2
 from players.entity import Player
+from listeners.tick import Delay
 
 from ..entity.battleroyal import _battle_royal
-from ..globals import _match_hud
+# from ..globals import _match_hud
 
 
 __all__ = (
@@ -18,12 +19,8 @@ __all__ = (
 
 class BattleRoyalHud:
 
-    _match_hud = None
+    match_hud = None
     _player_hud = dict()
-
-    @property
-    def match_hud(cls):
-        return cls._match_hud
 
     @classmethod
     def match_info(cls):
@@ -34,23 +31,25 @@ class BattleRoyalHud:
         if last_teams != 0:
             text += ' | Remaining teams {teams}'.format(teams=last_teams)
 
-        SayText2(text).send()
-        cls._match_hud = HudMsg(
+        # SayText2(text).send()
+        cls.match_hud = HudMsg(
             message=text,
             hold_time=1,
             x=-1,
             y=-0.7,
-        )
+        ).send()
 
     @classmethod
     def player_weight(cls, player):
+        player = _battle_royal.get_player(player)
+        if player is None:
+            return
+
         msg = 'Available weight {weight}'.format(weight=player.total_weight)
 
         cls._player_hud[player.userid] = HudMsg(
-            message=text,
+            message=msg,
             hold_time=1,
-            x=-1,
-            y=-0.7,
         ).send()
 
     @classmethod
@@ -59,6 +58,7 @@ class BattleRoyalHud:
 
     @staticmethod
     def hitmarker(player):
+        _configs = {}
         _configs['hitmarker'] = 'overlays/battle_royal/hitmarker'
         player.client_command('r_screenoverlay {}'.format(_configs['hitmarker']))
         Delay(0.5, player.client_command, ('r_screenoverlay off',))

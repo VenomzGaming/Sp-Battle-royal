@@ -31,7 +31,7 @@ def _inventory_menu_build(menu, index):
 
     menu.append(Text(' '))
     if hasattr(menu, 'previous_menu'):
-        menu.append(SimpleOption(7, 'Back', menu.previous_menu, highlight=True))
+        menu.append(SimpleOption(7, 'Back', (menu.previous_menu, None), highlight=True))
     menu.append(SimpleOption(9, 'Close', highlight=True))
 
 
