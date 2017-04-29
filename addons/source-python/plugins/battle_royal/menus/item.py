@@ -23,9 +23,8 @@ def _item_menu_build(menu, index):
     menu.append(Text(menu.item.description))
     menu.append(Text(str(menu.item.weight) + ' Kg'))
     menu.append(Text(' '))
-    menu.append(SimpleOption(1, 'Use', menu.item))
-    menu.append(SimpleOption(2, 'Drop', 'drop'))
-    # menu.append(SimpleOption(2, '2. Drop', drop_menu))
+    menu.append(SimpleOption(1, 'Use', (None, menu.item)))
+    menu.append(SimpleOption(2, 'Drop', (item_remove_menu, menu.item)))
     menu.append(Text(' '))
     menu.append(SimpleOption(7, 'Back', menu.previous_menu, highlight=True))
     menu.append(SimpleOption(9, 'Close', highlight=True))
@@ -34,20 +33,50 @@ def _item_menu_build(menu, index):
 
 def _item_menu_select(menu, index, choice):
     br_player = _battle_royal.get_player(Player(index))
-    param = choice.value
+    menu, item = choice.value
 
-    SayText2(str(param)).send()
-    if isinstance(param, SimpleMenu):
-        return param
+    if menu is not None:
+        menu.item = item
+        return menu
 
-    if isinstance(param, Item):
-        br_player.use(param)
-        # param.use(br_player)
-
+    br_player.use(item)
+    # param.use(br_player)
+    
     return menu.previous_menu
 
-
 item_menu = SimpleMenu(
+    build_callback=_item_menu_build,
+    select_callback=_item_menu_select
+)
+
+
+def _item_remove_menu_build(menu, index):
+    menu.clear()
+    br_player = _battle_royal.get_player(Player(index))
+    menu.append(Text('Remove : ' + menu.item.name))
+    menu.append(Text('Amount : '))
+    menu.append(SimpleOption(1, '1', 1))
+    menu.append(SimpleOption(2, '5', 5))
+    menu.append(SimpleOption(3, '10', 10))
+    menu.append(SimpleOption(4, '15', 15))
+    menu.append(SimpleOption(5, '20', 20))
+    menu.append(SimpleOption(6, 'All', None))
+    menu.append(Text(' '))
+    menu.append(SimpleOption(7, 'Back', menu.previous_menu, highlight=True))
+    menu.append(SimpleOption(9, 'Close', highlight=True))
+    return menu
+
+
+def _item_remove_menu_select(menu, index, choice):
+    br_player = _battle_royal.get_player(Player(index))
+    item = menu.item
+    amount = choice.value
+    br_player.inventory.remove(item, amount)
+
+    return menu.previous_menu.previous_menu
+
+
+item_remove_menu = SimpleMenu(
     build_callback=_item_menu_build,
     select_callback=_item_menu_select
 )

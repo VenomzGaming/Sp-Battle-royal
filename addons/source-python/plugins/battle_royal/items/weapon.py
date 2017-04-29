@@ -11,6 +11,7 @@ from ..globals import _authorize_weapon
 
 class Weapon(Item):
     item_type = 'weapon'
+    slot = ''
 
     def create(self, location):
         weapon_name = 'weapon_' + self.__class__.__name__.lower()
@@ -18,6 +19,11 @@ class Weapon(Item):
         entity.spawn()
         entity.teleport(location)
         return entity
+
+    def equip(self, player):
+        weapon = player.get_weapon(is_filters=self.slot)
+        if weapon is not None:
+            self.use(player)
 
     def on_item_given(player, item):
         SayText2('Player {player} has got {item} !'.format(player=player.name, item=item.classname)).send()

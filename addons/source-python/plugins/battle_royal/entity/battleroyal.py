@@ -9,7 +9,8 @@ from messages import SayText2
 from mathlib import Vector
 
 from .player import Player
-from ..globals import _items_spawn_manager, _players_spawn_manager
+# from ..globals import _items_spawn_manager, _players_spawn_manager
+from .. import globals
 from ..items.item import Item
 from ..utils.spawn_manager import SpawnManager
 
@@ -84,8 +85,8 @@ class BattleRoyal:
 
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
-        _items_spawn_manager = SpawnManager('item', global_vars.map_name)
-        locations = _items_spawn_manager.get_locations
+        items_spawn_manager = SpawnManager('item', global_vars.map_name)
+        locations = items_spawn_manager.get_locations
         if len(locations) != 0:
             for classname, cls in Item.get_subclass_dict().items():
                 if len(locations) == 0:
@@ -95,10 +96,9 @@ class BattleRoyal:
 
                 item = cls()
                 vector = random.choice(locations)
-                SayText2('Create ' + classname).send()
+                SayText2('Create : ' + classname).send()
                 entity = item.create(vector)
                 locations.remove(vector)
-                # entity = item.create(Vector(213.62831115722656, 799.6934204101562, 0.03125))
                 _battle_royal.add_item_ent(entity, item)
         else:
             SayText2('Nothing').send()

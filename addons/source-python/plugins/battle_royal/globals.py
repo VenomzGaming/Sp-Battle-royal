@@ -6,8 +6,8 @@
 __all__ = (
     '_authorize_weapon',
     # '_match_hud',
-    '_items_spawn_manager',
-    '_players_spawn_manager',
+    'items_spawn_manager',
+    'players_spawn_manager',
 )
 
 ## GLOBALS
@@ -15,11 +15,10 @@ __all__ = (
 # Weapon that can be given in 'bump_weapon' Hook
 _authorize_weapon = []
 
-# Contain HudMsg for remaining players and teams
-# _match_hud = None
-
 # Items spawn manager
-_items_spawn_manager = None
+global items_spawn_manager
+items_spawn_manager = None
 
 # Players spawn manager
-_players_spawn_manager = None
+global players_spawn_manager
+players_spawn_manager = None

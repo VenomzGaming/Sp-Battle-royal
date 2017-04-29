@@ -10,6 +10,10 @@ class Helmet(Armor):
     armor = 0
     weight = 10
 
+    def equip(self, player):
+        if not player.has_helmet:
+            self.use(player)
+
 
     def use(self, player):
     	player.has_helmet = True

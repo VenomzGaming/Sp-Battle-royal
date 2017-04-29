@@ -76,5 +76,7 @@ class Player(SourcePythonPlayer):
             self._inventory.remove(item) 
         else:
             self._inventory.remove(item, 1) 
-        
+
+    def equip(self, item):
+        item.equip(self)       
         

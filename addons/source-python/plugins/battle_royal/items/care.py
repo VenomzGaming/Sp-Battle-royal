@@ -10,15 +10,13 @@ class Care(Item):
     health = 0
 
     def _repeat(self):
-        SayText2(str(self.health)).send()
-        self._player.health += (self.health / 5)
-        SayText2('+' + str(self.health / 5)).send()
+        self._player.health += self.health // 5
 
 
     def use(self, player):
         self._player = player
         repeater = Repeat(self._repeat)
         repeater.start(1)
-        Delay(5, repeater.stop)
+        Delay(6, repeater.stop)
         # Add config for tick repeat heal ?
         SayText2('Use care').send()

@@ -50,6 +50,7 @@ class BattleRoyalHud:
         cls._player_hud[player.userid] = HudMsg(
             message=msg,
             hold_time=1,
+            channel=1,
         ).send()
 
     @classmethod

@@ -12,6 +12,10 @@ class Small_Backpack(Item):
     weight = 0
 
 
+    def equip(self, player):
+        if self.item_type == 'backpack' and self.add_weight > player.backpack.add_weight:
+            self.use(player)
+
     def use(self, player):
         player.backpack = self
         player.total_weight += self.add_weight

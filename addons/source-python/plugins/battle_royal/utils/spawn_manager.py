@@ -31,7 +31,8 @@ class SpawnManager(dict):
             )
 
         if isinstance(location, str):
-            location = eval('Vector(' + location + ')')
+            location = Vector(*map(float, location.replace(' ', '').split(',')))
+            location.z+32
 
         super().__setitem__(name, location)
 
@@ -51,9 +52,14 @@ class SpawnManager(dict):
             with open(self._path, 'w+') as file:
                 json.dump({}, file)
         else:
-            with open(self._path) as data_json:    
-                for name, value in json.load(data_json).items():
-                    self[name] = value
+            with open(self._path) as data_json: 
+                try:
+                    for name, value in json.load(data_json).items():
+                        self[name] = value
+                except:
+                    raise ValueError(
+                        'Json file incorrect.'
+                        )
 
     def _save_location(self):
         with open(self._path, 'w') as data_json:

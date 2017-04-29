@@ -58,7 +58,7 @@ def _on_tick():
     # Find a way to hide question mark on radar
     for player in PlayerIter('alive'):
         player.set_property_bool("m_bSpotted", False)
-        # BattleRoyalHud.player_weight(player)
+        BattleRoyalHud.player_weight(player)
 
 
 # @OnEntityCreated
@@ -138,11 +138,8 @@ def _on_pick_up_item(stack):
             entity.remove()
             # _battle_royal.remove_item_ent(entity)
 
-            if item.item_type == 'backpack' and item.add_weight > player.backpack.add_weight:
-                item.use(br_player)
-
-            if item.item_type in ['weapon', 'ammo']:
-                item.use(br_player)
+            if item.item_type in ['weapon', 'ammo', 'armor', 'backpack']:
+                item.equip(br_player)
 
             SayText2(br_player.name + ' take item ' + item.name).send()
 

@@ -20,7 +20,7 @@ def _backpack_menu_build(menu, index):
         return
 
     menu.clear()
-    brPlayer = _battle_royal.get_player(Player(index))
+    br_player = _battle_royal.get_player(Player(index))
 
     menu.append(Text('Inventory'))
     if len(menu.items.values()) != 0:
@@ -49,7 +49,7 @@ def _backpack_menu_select(menu, index, choice):
 
 def _item_backpack_menu_build(menu, index):
     menu.clear()
-    brPlayer = _battle_royal.get_player(Player(index))
+    br_player = _battle_royal.get_player(Player(index))
     menu.append(Text('Item : ' + menu.item.name))
     menu.append(Text('Type : ' + menu.item.item_type))
     menu.append(Text('Amount : ' + str(menu.item.amount)))

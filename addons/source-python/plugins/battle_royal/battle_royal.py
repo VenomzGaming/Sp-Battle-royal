@@ -11,7 +11,7 @@ from stringtables.downloads import Downloadables
 from .entity.battleroyal import _battle_royal
 from .entity.player import Player as BrPlayer
 from .events import *
-from .globals import _items_spawn_manager, _players_spawn_manager
+# from .globals import items_spawn_manager, players_spawn_manager
 from .hooks import *
 from .info import info
 from .menus import main_menu
@@ -60,17 +60,13 @@ def _open_inventory(command, index, team_only=None):
     SayText2('Show map').send()
 
 # ADD SPAWN POINT ADMIN COMMAND
-# @SayCommand('location')
-# def _open_inventory(command, index, team_only=None):
-#     player = Player(index)
-#     SayText2(str(player.view_vector)).send()
-
 @TypedSayCommand('location')
 def typed_add_location(command_info, type_spawn:str, name:str):
     player = Player(command_info.index)
-    vector = player.view_vector
-    # if type_spawn == 'item':
-    #     _items_spawn_manager.add(name, vector)
-    # else:
-    #     _players_spawn_manager.add(name, vector)
-    SayText2(str(player.view_vector)).send()
+    vector = player.view_coordinates
+    str_coord = str(vector.x) + ',' + str(vector.y) + ',' + str(vector.z)
+    if type_spawn == 'item':
+        items_spawn_manager.add(name, str_coord)
+    else:
+        players_spawn_manager.add(name, str_coord)
+    SayText2(str(vector)).send()
