@@ -9,4 +9,4 @@ class Rifle_Ammo(Ammo):
     name = 'Rifle Ammo'
     slot = 'primary'
     tag = 'rifle'
-    weight = 0
+    weight = 2

@@ -62,7 +62,7 @@ class Player(SourcePythonPlayer):
     def drop(self, item, amount=None):
         self._inventory.remove(item, amount)
         if item.item_type == 'weapon':
-            weapon = self.get_weapon('weapon_' + item.classname.lower())
+            weapon = self.get_weapon('weapon_' + item.__class__.__name__.lower())
             if weapon is not None:
                 weapon.remove()
                 

@@ -107,10 +107,10 @@ def _on_weapon_drop(stack):
         return False
     # SayText2('Item ' + str(item.name)).send()
     # Find why it crashed (when creating entity)
-    # entity = brPlayer.drop(item)
+    # entity = br_player.drop(item)
     # SayText2('DROP : ' + str(entity.index)).send()
     # SayText2(str(_battle_royal.items_ents)).send()
-    # _battle_royal.add_item_ent(entity)
+    # _battle_royal.add_item_ent(entity, item)
     # SayText2(str(_battle_royal.items_ents)).send()
 
 

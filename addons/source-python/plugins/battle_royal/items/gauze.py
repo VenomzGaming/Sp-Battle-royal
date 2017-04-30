@@ -9,7 +9,7 @@ from .care import Care
 class Gauze(Care):
     name = 'Gauze'
     health = 10
-    weight = 0
+    weight = 1
     models = 'models/props/props_crates/wooden_crate_32x64.mdl'
 
     def _repeat(self):

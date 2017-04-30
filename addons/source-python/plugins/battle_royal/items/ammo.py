@@ -1,6 +1,7 @@
 ## IMPORTS
 
 from messages import SayText2
+from weapons.manager import weapon_manager
 
 from .item import Item
 
@@ -14,12 +15,13 @@ class Ammo(Item):
 
     def equip(self, player):
         weapon = player.get_weapon(is_filters=self.slot)
-        if weapon is not None and self.tag in weapon.tags:
+        if weapon is not None and self.tag in weapon_manager[weapon.classname].tags:
             self.use(player)
+            player.inventory.remove(self)
 
     def use(self, player):
-        weapon = player.get_weapon(self.slot)
-        if weapon is not None and self.tag in weapon.tags:
+        weapon = player.get_weapon(is_filters=self.slot)
+        if weapon is not None and self.tag in weapon_manager[weapon.classname].tags:
             if self.clip != 0:
                 weapon.clip += self.clip
             weapon.ammo += self.ammo

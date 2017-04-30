@@ -11,6 +11,7 @@ class Armor(Item):
     def equip(self, player):
         if player.armor < self.armor:
             self.use(player)
+            player.inventory.remove(self)
 
     def use(self, player):
         player.armor = self.armor

@@ -7,5 +7,5 @@ from messages import SayText2
 
 class Medikit(Care):
     name = 'Medic Kit'
-    heal = 50
-    weight = 0
+    health = 50
+    weight = 1

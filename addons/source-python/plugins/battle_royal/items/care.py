@@ -18,5 +18,4 @@ class Care(Item):
         repeater = Repeat(self._repeat)
         repeater.start(1)
         Delay(6, repeater.stop)
-        # Add config for tick repeat heal ?
         SayText2('Use care').send()

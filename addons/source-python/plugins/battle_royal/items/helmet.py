@@ -13,6 +13,7 @@ class Helmet(Armor):
     def equip(self, player):
         if not player.has_helmet:
             self.use(player)
+            player.inventory.remove(self)
 
 
     def use(self, player):

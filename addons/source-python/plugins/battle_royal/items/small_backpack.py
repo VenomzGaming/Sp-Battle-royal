@@ -13,10 +13,11 @@ class Small_Backpack(Item):
 
 
     def equip(self, player):
-        if self.item_type == 'backpack' and self.add_weight > player.backpack.add_weight:
+        if  player.backpack is None or self.add_weight > player.backpack.add_weight:
             self.use(player)
+            player.inventory.remove(self)
 
     def use(self, player):
         player.backpack = self
         player.total_weight += self.add_weight
-        SayText2('Equip ' + self.classname).send()
+        SayText2('Equip ' + self.__class__.__name__).send()
