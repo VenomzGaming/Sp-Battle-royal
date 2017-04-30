@@ -3,26 +3,29 @@
 from entities.entity import Entity
 from weapons.entity import Weapon
 from entities.helpers import index_from_pointer
+from listeners.tick import Delay
 from messages import SayText2
 
 from .item import Item
 from ..globals import _authorize_weapon
 
 
-class Weapon(Item):
+class WeaponItem(Item):
     item_type = 'weapon'
     slot = ''
 
     def create(self, location):
         weapon_name = 'weapon_' + self.__class__.__name__.lower()
-        entity = Entity.create(weapon_name)
+        entity = Weapon.create(weapon_name)
+        entity.origin = location
         entity.spawn()
-        entity.teleport(location)
+        entity.ammo = 0
+        # entity.clip = 0
         return entity
 
     def equip(self, player):
         weapon = player.get_weapon(is_filters=self.slot)
-        if weapon is not None:
+        if weapon is None:
             self.use(player)
 
     def on_item_given(player, item):

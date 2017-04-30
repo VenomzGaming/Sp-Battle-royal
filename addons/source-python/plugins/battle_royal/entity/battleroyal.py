@@ -9,7 +9,6 @@ from messages import SayText2
 from mathlib import Vector
 
 from .player import Player
-# from ..globals import _items_spawn_manager, _players_spawn_manager
 from .. import globals
 from ..items.item import Item
 from ..utils.spawn_manager import SpawnManager
@@ -85,13 +84,13 @@ class BattleRoyal:
 
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
-        items_spawn_manager = SpawnManager('item', global_vars.map_name)
-        locations = items_spawn_manager.get_locations
+        globals.items_spawn_manager = SpawnManager('item', global_vars.map_name)
+        locations = globals.items_spawn_manager.get_locations
         if len(locations) != 0:
             for classname, cls in Item.get_subclass_dict().items():
                 if len(locations) == 0:
                     break
-                if classname in ['Weapon', 'Ammo', 'Armor', 'Care']:
+                if classname in ['WeaponItem', 'Ammo', 'Armor', 'Care']:
                     continue
 
                 item = cls()
@@ -134,8 +133,8 @@ class BattleRoyal:
 
         # Remove all spawned entities
         SayText2('SPAWNED ENT : ' + str(self._items_ents)).send()
-        all_entities = self._items_ents.items()
-        for index, item in all_entities:
+        all_entities = self._items_ents.copy()
+        for index, item in all_entities.items():
             SayText2('Index : ' + str(index)).send()
             Entity(index).remove()
 

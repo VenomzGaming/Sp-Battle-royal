@@ -62,8 +62,12 @@ class SpawnManager(dict):
                         )
 
     def _save_location(self):
+        temp_dict = {}
+        for key, location in self.items():
+            temp_dict[key] = str(location.x) + ',' + str(location.y) + ',' + str(location.z)
+
         with open(self._path, 'w') as data_json:
-            json.dump(self, data_json, indent=4, sort_keys=True)
+            json.dump(temp_dict, data_json, indent=4, sort_keys=True)
 
     def add(self, name, value):
         self[name] = value

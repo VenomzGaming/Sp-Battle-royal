@@ -31,7 +31,6 @@ class BattleRoyalHud:
         if last_teams != 0:
             text += ' | Remaining teams {teams}'.format(teams=last_teams)
 
-        # SayText2(text).send()
         cls.match_hud = HudMsg(
             message=text,
             hold_time=1,
@@ -41,16 +40,18 @@ class BattleRoyalHud:
 
     @classmethod
     def player_weight(cls, player):
-        player = _battle_royal.get_player(player)
-        if player is None:
+        br_player = _battle_royal.get_player(player)
+        if br_player is None:
             return
 
-        msg = 'Available weight {weight}'.format(weight=player.total_weight)
+        msg = 'Available weight {weight} Kg'.format(weight=br_player.total_weight)
 
-        cls._player_hud[player.userid] = HudMsg(
+        cls._player_hud[br_player.userid] = HudMsg(
             message=msg,
             hold_time=1,
             channel=1,
+            x=-1,
+            y=1,
         ).send()
 
     @classmethod

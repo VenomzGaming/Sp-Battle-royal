@@ -26,6 +26,7 @@ class Inventory:
 
     def _add_weight(self, item):
         self.player.total_weight -= (item.weight * item.amount)
+        SayText2('2 ' + str(self.player.total_weight)).send()
 
     def _remove_weight(self, item):
         self.player.total_weight += (item.weight * item.amount)

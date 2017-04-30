@@ -133,7 +133,9 @@ def _on_pick_up_item(stack):
         backpack_menu.backpack = item
         backpack_menu.send()
     else:
+        SayText2('1 ' + str(br_player.total_weight)).send()
         success = br_player.pick_up(item)
+        SayText2('3 ' + str(br_player.total_weight)).send()
         if success:
             entity.remove()
             # _battle_royal.remove_item_ent(entity)
@@ -152,14 +154,12 @@ def _pre_damage_events(stack_data):
         return
 
     entity = Entity(take_damage_info.attacker)
-    attacker = _battle_royal.get_player(userid_from_index(entity.index)) if entity.is_player() else None
-    victim = _battle_royal.get_player(userid_from_pointer(stack_data[0]))
-    SayText2('Attacker Hook : ' + str(attacker)).send()
-    SayText2('Victim Hook : ' + str(victim)).send()
+    attacker = _battle_royal.get_player(Player(entity.index)) if entity.is_player() else None
+    victim = _battle_royal.get_player(make_object(Player, stack_data[0]))
 
     # Maybe add destroy armor before damaging player if sht is in head or body
-    if victim.armor > 0:
-        take_damage_info.damage = victim.armor - take_damage_info.damage
+    # if victim.armor > 0:
+    #     take_damage_info.damage = victim.armor - take_damage_info.damage
 
     # Add hit marker on hit (maybe color in function of hit armor or health)
     BattleRoyalHud.hitmarker(attacker)

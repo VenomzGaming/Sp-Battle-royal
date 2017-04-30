@@ -1,11 +1,11 @@
 ## IMPORTS
 
-from .weapon import Weapon
+from .weapon import WeaponItem
 
 from messages import SayText2
 
 
-class Healthshot(Weapon):
+class Healthshot(WeaponItem):
     name = 'Health shot'
     item_type = 'weapon'
     weight = 0

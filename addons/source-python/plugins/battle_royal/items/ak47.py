@@ -5,11 +5,11 @@ from entities.helpers import index_from_pointer
 from listeners.tick import Delay
 from messages import SayText2
 
-from .weapon import Weapon
+from .weapon import WeaponItem
 # from .globals import _authorize_weapon
 
 
-class Ak47(Weapon):
+class Ak47(WeaponItem):
     name = 'Ak47'
     item_type = 'weapon'
     slot = 'primary'
