@@ -5,7 +5,6 @@
 
 __all__ = (
     '_authorize_weapon',
-    # '_match_hud',
     'items_spawn_manager',
     'players_spawn_manager',
 )
@@ -15,10 +14,13 @@ __all__ = (
 # Weapon that can be given in 'bump_weapon' Hook
 _authorize_weapon = []
 
+# Weapon dict weapon name
+_weapon_name = {
+	'Ak47' : 'AK47'
+}
+
 # Items spawn manager
-global items_spawn_manager
 items_spawn_manager = None
 
 # Players spawn manager
-global players_spawn_manager
 players_spawn_manager = None

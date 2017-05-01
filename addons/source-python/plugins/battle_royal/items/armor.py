@@ -16,3 +16,4 @@ class Armor(Item):
     def use(self, player):
         player.armor = self.armor
         SayText2('Add armor').send()
+        return True

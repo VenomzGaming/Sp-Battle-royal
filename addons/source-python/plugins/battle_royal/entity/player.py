@@ -3,7 +3,7 @@
 from engines.precache import Model
 from entities.entity import Entity
 from messages import SayText2
-from players.entity import Player as SourcePythonPlayer
+from players.entity import Player
 
 
 from .inventory import Inventory
@@ -11,11 +11,11 @@ from .inventory import Inventory
 ## ALL DECLARATIONS
 
 __all__ = (
-    'Player',
+    'BattleRoyalPlayer',
 )
 
 
-class Player(SourcePythonPlayer):
+class BattleRoyalPlayer(Player):
 
     def __init__(self, index, weight, backpack=None):
         super().__init__(index)
@@ -71,12 +71,16 @@ class Player(SourcePythonPlayer):
         return entity
 
     def use(self, item):
-        item.use(self)
-        if item.item_type == 'ammo':
-            self._inventory.remove(item) 
-        else:
-            self._inventory.remove(item, 1) 
+        can_used = item.use(self)
+        if can_used:
+            if item.item_type == 'ammo':
+                self._inventory.remove(item) 
+            else:
+                self._inventory.remove(item, 1) 
 
-    def equip(self, item):
-        item.equip(self)       
+    def equip(self, item, loot=False):
+        if item.item_type == 'weapon':
+            item.equip(self, loot)    
+        else:
+            item.equip(self)
         

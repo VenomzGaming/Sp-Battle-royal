@@ -16,8 +16,10 @@ class Ammo(Item):
     def equip(self, player):
         weapon = player.get_weapon(is_filters=self.slot)
         if weapon is not None and self.tag in weapon_manager[weapon.classname].tags:
-            self.use(player)
-            player.inventory.remove(self)
+            can_used = self.use(player)
+            
+            if can_used:
+                player.inventory.remove(self)
 
     def use(self, player):
         weapon = player.get_weapon(is_filters=self.slot)
@@ -26,5 +28,7 @@ class Ammo(Item):
                 weapon.clip += self.clip
             weapon.ammo += self.ammo
             SayText2('Add Ammo to ' + weapon.classname).send()
+            return True
         else:       
             SayText2('Can\'t use').send()
+            return False

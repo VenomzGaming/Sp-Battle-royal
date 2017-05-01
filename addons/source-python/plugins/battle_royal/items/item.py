@@ -24,20 +24,17 @@ class Item:
         if self.models is not None:
             entity.model = Model(self.models)
         entity.spawn_flags = 265
+        entity.collision_group = 17
         entity.spawn()
         return entity
 
     def use(self):
         SayText2('Can\'t use').send()
+        return False
 
     def destroy(self):
         SayText2('Can\'t destroy').send()
-
-    def show(self):
-        SayText2(self.name).send()
-        SayText2(self.item_type).send()
-        SayText2(self.description).send()
-        SayText2(str(self.weight)).send()
+        return False
 
     @classmethod
     def get_subclasses(cls):

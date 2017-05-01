@@ -8,7 +8,7 @@ from filters.players import PlayerIter
 from messages import SayText2
 from mathlib import Vector
 
-from .player import Player
+from .player import BattleRoyalPlayer
 from .. import globals
 from ..items.item import Item
 from ..utils.spawn_manager import SpawnManager

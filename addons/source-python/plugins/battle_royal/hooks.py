@@ -84,11 +84,12 @@ def _on_entity_delete(entity):
 
 @EntityPreHook(EntityCondition.is_human_player, 'bump_weapon')
 def _on_weapon_bump(stack):
+    player = make_object(Player, stack[0])
     weapon = make_object(Entity, stack[1])
     if weapon.index not in _authorize_weapon:
         return False
     
-    _authorize_weapon.remove(weapon.index)     
+    _authorize_weapon.remove(weapon.index)  
 
 
 @EntityPreHook(EntityCondition.is_human_player, 'drop_weapon')
@@ -138,10 +139,12 @@ def _on_pick_up_item(stack):
         SayText2('3 ' + str(br_player.total_weight)).send()
         if success:
             entity.remove()
-            # _battle_royal.remove_item_ent(entity)
 
-            if item.item_type in ['weapon', 'ammo', 'armor', 'backpack']:
-                item.equip(br_player)
+            if item.item_type == 'weapon':
+                # Second param is used to emptying weapon ammo
+                br_player.equip(item, True)
+            elif item.item_type in ['ammo', 'armor', 'backpack']:
+                br_player.equip(item)
 
             SayText2(br_player.name + ' take item ' + item.name).send()
 

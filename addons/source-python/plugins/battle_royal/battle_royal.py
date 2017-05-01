@@ -9,7 +9,7 @@ from players.entity import Player
 from stringtables.downloads import Downloadables
 
 from .entity.battleroyal import _battle_royal
-from .entity.player import Player as BrPlayer
+from .entity.player import BattleRoyalPlayer
 from .events import *
 from . import globals
 from .hooks import *

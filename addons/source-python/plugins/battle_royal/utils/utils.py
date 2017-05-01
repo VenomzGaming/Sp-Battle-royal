@@ -60,27 +60,10 @@ class BattleRoyalHud:
 
     @staticmethod
     def hitmarker(player):
+        if player.steamid == 'BOT':
+            return
+            
         _configs = {}
         _configs['hitmarker'] = 'overlays/battle_royal/hitmarker'
         player.client_command('r_screenoverlay {}'.format(_configs['hitmarker']))
         Delay(0.5, player.client_command, ('r_screenoverlay off',))
-
-
-## OLD WAY
-
-def show_match_hud():
-    # Bug don't show HudMsg
-    alive_player = len(_battle_royal.players)
-    last_teams = len(_battle_royal.teams)
-
-    text = 'Remaining players {players}'.format(players=alive_player)
-    if last_teams != 0:
-        text += ' | Remaining teams {teams}'.format(teams=last_teams)
-
-    SayText2(text).send()
-    _match_hud = HudMsg(
-        message=text,
-        hold_time=1,
-        x=-1,
-        y=-0.7,
-    )

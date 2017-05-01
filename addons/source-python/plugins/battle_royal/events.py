@@ -15,9 +15,9 @@ from players.entity import Player
 from players.helpers import index_from_userid, userid_from_pointer
 
 from .entity.battleroyal import _battle_royal
-from .entity.player import Player as BrPlayer
+from .entity.player import BattleRoyalPlayer
 from .items.item import Item
-from .utils.utils import BattleRoyalHud, show_match_hud
+from .utils.utils import BattleRoyalHud
 
 
 # HIDEHUD_RADAR = 1 << 12
@@ -34,9 +34,8 @@ def _on_round_start(event_data):
     SayText2('Round Start').send()
 
     for player in PlayerIter('alive'):
-        brPlayer = BrPlayer(player.index, 50)
-        _battle_royal.add_player(brPlayer)
-        # BattleRoyalHud.player_weight(player)
+        br_player = BattleRoyalPlayer(player.index, 50)
+        _battle_royal.add_player(br_player)
 
         # Hide entierly the radar 
         # hidehud = player.hidden_huds
@@ -45,8 +44,6 @@ def _on_round_start(event_data):
         # player.hidden_huds =  hidehud | HIDEHUD_RADAR
 
     _battle_royal.start()
-    # show_match_hud()
-    # BattleRoyalHud.match_info()
 
 
 @Event('round_end')
@@ -69,10 +66,6 @@ def _on_kill_events(event_data):
     victim = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
     SayText2('Attacker : ' + str(attacker)).send()
     SayText2('Victim : ' + str(victim)).send()
-
-    # # Update Match Hud
-    # show_match_hud()
-    # BattleRoyalHud.match_hud()
 
     # # Add player to dead
     # _battle_royal.remove_player(victim)
