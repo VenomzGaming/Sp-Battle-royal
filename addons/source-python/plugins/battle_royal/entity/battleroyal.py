@@ -95,12 +95,11 @@ class BattleRoyal:
 
                 item = cls()
                 vector = random.choice(locations)
-                SayText2('Create : ' + classname).send()
                 entity = item.create(vector)
                 locations.remove(vector)
                 _battle_royal.add_item_ent(entity, item)
         else:
-            SayText2('Nothing').send()
+            SayText2('Any spawn point on this map.').send()
     
 
     def spawn_players(self):

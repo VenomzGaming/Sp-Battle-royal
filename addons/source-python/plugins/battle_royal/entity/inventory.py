@@ -70,7 +70,6 @@ class Inventory:
                     self._remove_item(item)
                 else:
                     self._items[item.name] = item
-                    SayText2('Remove Amount').send()
         else:
             self._remove_item(item)
 

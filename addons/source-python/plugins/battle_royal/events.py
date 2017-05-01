@@ -64,12 +64,12 @@ def _on_kill_events(event_data):
 
     attacker = _battle_royal.get_player(Player(index_from_userid(event_data['attacker'])))
     victim = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
-    SayText2('Attacker : ' + str(attacker)).send()
-    SayText2('Victim : ' + str(victim)).send()
+    SayText2('Attacker : ' + str(attacker.userid)).send()
+    SayText2('Victim : ' + str(victim.userid)).send()
 
-    # # Add player to dead
-    # _battle_royal.remove_player(victim)
-    # _battle_royal.add_dead_player(victim)
+    # Add player to dead
+    _battle_royal.remove_player(victim)
+    _battle_royal.add_dead_player(victim)
 
     # assister = None
     # if event_data['assister']:
@@ -78,9 +78,9 @@ def _on_kill_events(event_data):
     # if assister:
     #     pass
 
-    # # Drop player backpack to be taken by another player
-    # entity = victim.drop_inventory()
-    # _battle_royal.add_item_ent(entity, victim.inventory)
+    # Drop player backpack to be taken by another player
+    entity = victim.drop_inventory()
+    _battle_royal.add_item_ent(entity, victim.inventory)
 
 @Event('player_disconnect')
 def _on_player_disconnect(event_data):

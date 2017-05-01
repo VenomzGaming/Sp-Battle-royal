@@ -36,7 +36,6 @@ class WeaponItem(Item):
                 SayText2('Can used').send()
                 player.inventory.remove(self)
 
-
     def change(self, player, weapon):
         SayText2('Change').send()
         weapon_name, clip, ammo = weapon.classname.split('_')[1].title(), weapon.clip, weapon.ammo

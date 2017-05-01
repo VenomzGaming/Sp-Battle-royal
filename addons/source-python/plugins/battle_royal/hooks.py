@@ -61,22 +61,21 @@ def _on_tick():
         BattleRoyalHud.player_weight(player)
 
 
-# @OnEntityCreated
-# def _on_entity_create(entity):
-#     SayText2(
-#         'Entity {} has been created !'.format(entity.index)
-#     ).send()
-
-
 @OnEntityDeleted
 def _on_entity_delete(entity):
     item = _battle_royal.get_item_ent(entity)
     if item is None:
         return
 
-    SayText2(
-        'Entity {} Item {} has been removed !'.format(entity.index, item.name.title())
-    ).send()
+    if isinstance(item, Inventory):
+        SayText2(
+            'Entity {} Inventory of {} has been removed !'.format(entity.index, item.player.name)
+        ).send()
+    else:
+        SayText2(
+            'Entity {} Item {} has been removed !'.format(entity.index, item.name.title())
+        ).send()
+
     _battle_royal.remove_item_ent(entity)
 
 

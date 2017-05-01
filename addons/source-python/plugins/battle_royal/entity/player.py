@@ -2,6 +2,7 @@
 
 from engines.precache import Model
 from entities.entity import Entity
+from mathlib import Vector
 from messages import SayText2
 from players.entity import Player
 
@@ -48,9 +49,12 @@ class BattleRoyalPlayer(Player):
     def drop_inventory(self):
         SayText2('Drop inventory').send()
         entity = Entity.create('prop_physics_override')
+        location = self.origin
+        entity.origin = Vector(location.x+32, location.y, location.z)
+        entity.model = Model('models/props/props_crates/wooden_crate_32x64.mdl')
+        entity.spawn_flags = 265
         entity.spawn()
-        entity.world_model_index = Model(self.model).index
-        entity.teleport(self.origin)
+
         return entity
 
     def pick_up(self, item):
