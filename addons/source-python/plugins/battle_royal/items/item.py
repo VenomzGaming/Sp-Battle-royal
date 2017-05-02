@@ -23,9 +23,9 @@ class Item:
         entity.origin = location
         if self.models is not None:
             entity.model = Model(self.models)
-        entity.spawn_flags = 265
-        entity.collision_group = 17
+        entity.spawn_flags = 256
         entity.spawn()
+        entity.disable_collision = True
         return entity
 
     def use(self):

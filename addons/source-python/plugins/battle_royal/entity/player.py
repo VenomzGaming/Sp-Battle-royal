@@ -24,6 +24,7 @@ class BattleRoyalPlayer(Player):
         self._total_weight = weight
         self._backpack = backpack
         self._inventory = Inventory(self)
+        self._group = None
 
     def get_total_weight(self):
         return self._total_weight
@@ -41,9 +42,18 @@ class BattleRoyalPlayer(Player):
 
     backpack = property(get_backpack, set_backpack)
 
+    def get_group(self):
+        return self._group
+
+    def set_group(self, group):
+        self._group = group
+
+    group = property(get_group, set_group)
+
     @property
     def inventory(self):
         return self._inventory
+
 
 
     def drop_inventory(self):

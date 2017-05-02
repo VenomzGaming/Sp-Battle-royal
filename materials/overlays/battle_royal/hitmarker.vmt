@@ -1,5 +1,5 @@
 "UnlitGeneric"
 {
 	"$translucent" "1"
-	"$basetexture" "overlays/killstreaker/hitmarker"
+	"$basetexture" "overlays/battle_royal/hitmarker"
 }

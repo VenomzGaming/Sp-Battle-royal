@@ -35,33 +35,50 @@ downloadables.add_directory('materials/overlays/battle_royal')
 ## MENUS
 
 # MAIN MENU
-@SayCommand(['battleroyal', 'br'])
+@SayCommand(['!battleroyal', '!br', '/battleroyal', '/br'])
 def _open_main_menu(command, index, team_only=None):
     main_menu.send()
+    return CommandReturn.BLOCK
+
 
 # INVENTORY MENU
-@SayCommand(['inventory', 'inv'])
+@SayCommand(['!inventory', '!inv', '/inventory', '/inv'])
 def _open_inventory_menu(command, index, team_only=None):
     inventory_menu.send()
+    return CommandReturn.BLOCK
 
 
 ## COMMANDS
 
 # SPRINT COMMAND
-@SayCommand('sprint')
-def _open_inventory(command, index, team_only=None):
+@SayCommand(['!invite', '/invite', '!group', '/group'])
+def _invit_to_group(command, index, team_only=None):
     player = Player(index)
     player.speed = 1.2
+    return CommandReturn.BLOCK
+
+
+# SPRINT COMMAND
+@SayCommand(['!sprint', '/sprint'])
+def _activ_sprint(command, index, team_only=None):
+    player = Player(index)
+    player.speed = 1.2
+    return CommandReturn.BLOCK
+
 
 # MAP COMMAND
-@SayCommand('map')
+@SayCommand(['!map', '/map'])
 def _open_inventory(command, index, team_only=None):
     player = Player(index)
     SayText2('Show map').send()
+    return CommandReturn.BLOCK
+
+
+## ADMIN
 
 # ADD SPAWN POINT ADMIN COMMAND
 @TypedSayCommand('location')
-def typed_add_location(command_info, type_spawn:str, name:str):
+def _add_location(command_info, type_spawn:str, name:str):
     player = Player(command_info.index)
     vector = player.view_coordinates
     if type_spawn == 'item':
@@ -69,3 +86,4 @@ def typed_add_location(command_info, type_spawn:str, name:str):
     else:
         globals.players_spawn_manager.add(name, vector)
     SayText2(str(vector)).send()
+    return CommandReturn.BLOCK

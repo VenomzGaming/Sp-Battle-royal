@@ -64,6 +64,6 @@ class BattleRoyalHud:
             return
             
         _configs = {}
-        _configs['hitmarker'] = 'overlays/battle_royal/hitmarker.vmt'
+        _configs['hitmarker'] = 'overlays/battle_royal/hitmarker'
         player.client_command('r_screenoverlay {}'.format(_configs['hitmarker']))
         Delay(0.5, player.client_command, ('r_screenoverlay off',))

@@ -48,8 +48,6 @@ def _on_join_team(command, index):
 
 @OnTick
 def _on_tick():
-    # Add sending HudMsg
-    # if _match_hud is not None:
     # if not _battle_royal.status: 
     #     return
 
@@ -140,7 +138,7 @@ def _on_pick_up_item(stack):
             entity.remove()
 
             if item.item_type == 'weapon':
-                # Second param is used to emptying weapon ammo
+                # Second param is used to set weapon ammo
                 br_player.equip(item, True)
             elif item.item_type in ['ammo', 'armor', 'backpack']:
                 br_player.equip(item)
@@ -158,6 +156,10 @@ def _pre_damage_events(stack_data):
     entity = Entity(take_damage_info.attacker)
     attacker = _battle_royal.get_player(Player(entity.index)) if entity.is_player() else None
     victim = _battle_royal.get_player(make_object(Player, stack_data[0]))
+
+    if attacker.group == victim.group:
+        SayText2('In your group !').send()
+        return
 
     # Maybe add destroy armor before damaging player if sht is in head or body
     # if victim.armor > 0:
