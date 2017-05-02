@@ -59,12 +59,11 @@ def _on_player_spawn(event_data):
 
 @Event('player_death')
 def _on_kill_events(event_data):
-    if event_data['userid'] == 0:
-        return
+    if event_data['attacker'] != 0:
+        attacker = _battle_royal.get_player(Player(index_from_userid(event_data['attacker'])))
+        # SayText2('Attacker : ' + str(attacker.userid)).send()
 
-    attacker = _battle_royal.get_player(Player(index_from_userid(event_data['attacker'])))
     victim = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
-    SayText2('Attacker : ' + str(attacker.userid)).send()
     SayText2('Victim : ' + str(victim.userid)).send()
 
     # Add player to dead

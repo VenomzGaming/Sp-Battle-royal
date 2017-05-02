@@ -12,7 +12,6 @@ from ..entity.battleroyal import _battle_royal
 
 __all__ = (
     'BattleRoyalHud',
-    'show_match_hud',
 )
 
 ## BATTLE ROYAL HUD MANAGER

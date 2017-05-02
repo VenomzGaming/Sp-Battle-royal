@@ -48,8 +48,8 @@ def _on_join_team(command, index):
 
 @OnTick
 def _on_tick():
-    # if not _battle_royal.status: 
-    #     return
+    if not _battle_royal.status: 
+        return
 
     BattleRoyalHud.match_info()
     
@@ -101,6 +101,7 @@ def _on_weapon_drop(stack):
     if weapon_name == 'healthshot':
         item = Item.get_subclass_dict()[weapon_name.title()]()
         br_player.inventory.remove(item, 1)
+        _battle_royal.add_player(br_player)
     else:
         return False
     # SayText2('Item ' + str(item.name)).send()
@@ -133,8 +134,8 @@ def _on_pick_up_item(stack):
     else:
         SayText2('1 ' + str(br_player.total_weight)).send()
         success = br_player.pick_up(item)
-        SayText2('3 ' + str(br_player.total_weight)).send()
         if success:
+            SayText2('3 ' + str(br_player.total_weight)).send()
             entity.remove()
 
             if item.item_type == 'weapon':
@@ -143,6 +144,9 @@ def _on_pick_up_item(stack):
             elif item.item_type in ['ammo', 'armor', 'backpack']:
                 br_player.equip(item)
 
+            SayText2('4 ' + str(br_player.total_weight)).send()
+            _battle_royal.add_player(br_player)
+            SayText2('5 ' + str(br_player.total_weight)).send()
             SayText2(br_player.name + ' take item ' + item.name).send()
 
 
@@ -157,7 +161,8 @@ def _pre_damage_events(stack_data):
     attacker = _battle_royal.get_player(Player(entity.index)) if entity.is_player() else None
     victim = _battle_royal.get_player(make_object(Player, stack_data[0]))
 
-    if attacker.group == victim.group:
+    if attacker.group is not None and attacker.group == victim.group:
+        take_damage_info.damage = 0
         SayText2('In your group !').send()
         return
 

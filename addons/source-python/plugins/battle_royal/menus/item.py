@@ -45,6 +45,9 @@ def _item_remove_menu_select(menu, index, choice):
     if amount is not None:
         item.amount = amount
 
+    _battle_royal.add_player(br_player)
+
+    # Re-create item
     location = br_player.origin
     entity = item.create(Vector(location.x+40, location.y, location.z))
     _battle_royal.add_item_ent(entity, item)

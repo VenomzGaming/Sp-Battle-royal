@@ -12,6 +12,6 @@ class M4A1(WeaponItem):
     name = 'M4A1'
     item_type = 'weapon'
     slot = 'primary'
-    clip = 0
+    clip = 30
     ammo = 0
     weight = 20

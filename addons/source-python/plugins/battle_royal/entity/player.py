@@ -62,7 +62,6 @@ class BattleRoyalPlayer(Player):
         location = self.origin
         entity.origin = Vector(location.x+32, location.y, location.z)
         entity.model = Model('models/props/props_crates/wooden_crate_32x64.mdl')
-        entity.spawn_flags = 265
         entity.spawn()
 
         return entity

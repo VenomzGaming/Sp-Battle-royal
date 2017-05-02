@@ -14,6 +14,6 @@ class AK47(WeaponItem):
     name = 'AK47'
     item_type = 'weapon'
     slot = 'primary'
-    clip = 0
+    clip = 30
     ammo = 0
     weight = 20

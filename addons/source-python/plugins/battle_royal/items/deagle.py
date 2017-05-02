@@ -12,6 +12,6 @@ class Deagle(WeaponItem):
     name = 'Deagle'
     item_type = 'weapon'
     slot = 'secondary'
-    clip = 0
+    clip = 10
     ammo = 0
     weight = 5

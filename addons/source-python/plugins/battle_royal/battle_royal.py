@@ -10,6 +10,7 @@ from stringtables.downloads import Downloadables
 
 from .entity.battleroyal import _battle_royal
 from .entity.player import BattleRoyalPlayer
+from .entity.group import BattleRoyalGroup
 from .events import *
 from . import globals
 from .hooks import *
@@ -50,11 +51,30 @@ def _open_inventory_menu(command, index, team_only=None):
 
 ## COMMANDS
 
-# SPRINT COMMAND
-@SayCommand(['!invite', '/invite', '!group', '/group'])
+# GROUP COMMANDS
+
+@TypedSayCommand(['!create', '/create'])
+def _create_group(command, index, team_only=None):
+    player = Player(index)
+    # Add group to list br
+    return CommandReturn.BLOCK
+
+@TypedSayCommand(['!delete', '/delete'])
+def _create_group(command, index, team_only=None):
+    player = Player(index)
+    # Remove group from list br
+    return CommandReturn.BLOCK
+
+@TypedSayCommand(['!invite', '/invite', '!group', '/group'])
 def _invit_to_group(command, index, team_only=None):
     player = Player(index)
-    player.speed = 1.2
+    # Add player to group
+    return CommandReturn.BLOCK
+
+@TypedSayCommand(['!remove', '/remove'])
+def _remove_to_group(command, index, team_only=None):
+    player = Player(index)
+    # Remove player to group
     return CommandReturn.BLOCK
 
 
