@@ -55,7 +55,6 @@ class BattleRoyalPlayer(Player):
         return self._inventory
 
 
-
     def drop_inventory(self):
         SayText2('Drop inventory').send()
         entity = Entity.create('prop_physics_override')

@@ -28,12 +28,21 @@ class BattleRoyal:
         self._items_ents = dict()
         self._players_backpack_ents = dict()
         self._players = dict()
-        self._teams = dict()
+        self._groups = dict()
         self._dead_players = dict()
 
     @property
     def teams(self):
-        return self._teams   
+        return self._teams
+
+    def get_team(self, team):
+        return self._teams[team.name] if team.name in self._teams else None
+
+    def add_team(self, team):
+        self._teams[team.name] = team
+
+    def remove_team(self, team):
+        del self._teams[team.name] 
 
     @property
     def items_ents(self):
@@ -105,8 +114,8 @@ class BattleRoyal:
     def spawn_players(self):
         # For the moment spawn player in random spawn on map (After spawn user with parachute)
         pass
-        # _players_spawn_manager = SpawnManager('player', global_vars.map_name)
-        # locations = _players_spawn_manager.get_locations
+        # globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
+        # locations = globals.players_spawn_manager.get_locations
         # for player in PlayerIter('alive'):
         #     vector = random.choice(locations)
         #     player.origin = vector

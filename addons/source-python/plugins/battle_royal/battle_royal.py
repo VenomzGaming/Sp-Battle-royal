@@ -8,11 +8,12 @@ from messages import SayText2
 from players.entity import Player
 from stringtables.downloads import Downloadables
 
+from . import globals
+from .commands.group_command import *
 from .entity.battleroyal import _battle_royal
 from .entity.player import BattleRoyalPlayer
 from .entity.group import BattleRoyalGroup
 from .events import *
-from . import globals
 from .hooks import *
 from .info import info
 from .menus import main_menu
@@ -50,32 +51,6 @@ def _open_inventory_menu(command, index, team_only=None):
 
 
 ## COMMANDS
-
-# GROUP COMMANDS
-
-@TypedSayCommand(['!create', '/create'])
-def _create_group(command, index, team_only=None):
-    player = Player(index)
-    # Add group to list br
-    return CommandReturn.BLOCK
-
-@TypedSayCommand(['!delete', '/delete'])
-def _create_group(command, index, team_only=None):
-    player = Player(index)
-    # Remove group from list br
-    return CommandReturn.BLOCK
-
-@TypedSayCommand(['!invite', '/invite', '!group', '/group'])
-def _invit_to_group(command, index, team_only=None):
-    player = Player(index)
-    # Add player to group
-    return CommandReturn.BLOCK
-
-@TypedSayCommand(['!remove', '/remove'])
-def _remove_to_group(command, index, team_only=None):
-    player = Player(index)
-    # Remove player to group
-    return CommandReturn.BLOCK
 
 
 # SPRINT COMMAND
