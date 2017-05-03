@@ -9,6 +9,7 @@ from messages import SayText2
 from mathlib import Vector
 
 from .player import BattleRoyalPlayer
+from .gas import Gas
 from .. import globals
 from ..items.item import Item
 from ..utils.spawn_manager import SpawnManager
@@ -28,8 +29,9 @@ class BattleRoyal:
         self._items_ents = dict()
         self._players_backpack_ents = dict()
         self._players = dict()
-        self._groups = dict()
         self._dead_players = dict()
+        self._groups = dict()
+        self._gas_wave = []
 
     @property
     def teams(self):
@@ -90,6 +92,10 @@ class BattleRoyal:
     def add_dead_player(self, player):
         self._dead_players[player.userid] = player
 
+    @property
+    def gas(self):
+        return self._gas_wave  
+
 
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
@@ -123,7 +129,18 @@ class BattleRoyal:
 
     def spread_gas(self):
         # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 min)
-        pass
+        wave_one = Gas()
+        wave_one.spread(60)
+        self._gas_wave.append(wave_one)
+
+        wave_two = Gas()
+        wave_two.spread(120)
+        self._gas_wave.append(wave_two)
+
+        wave_three = Gas()
+        wave_three.spread(120)
+        self._gas_wave.append(wave_three)
+
 
     def warmup(self):
         # Maybe implement the warmup directly in map. A waiting for 30s (god mod player) before begining of the round
@@ -134,7 +151,9 @@ class BattleRoyal:
         self.spawn_item()
         self.spawn_players()
         self.status = True
+
         # Add repeater to spread gas
+        self.spread_gas()
 
     def end(self):
         self.status = False
@@ -155,10 +174,15 @@ class BattleRoyal:
 
         self._players_backpack_ents.clear()
 
-        # Clear dict
+        # Remove gas
+        for gas in self._gas_wave:
+            gas.stop()
+
+        # Clear dict and list
         self._players.clear()
         self._teams.clear()
         self._dead_players.clear()
+        self._gas_wave.clear()
         
 ## GLOBALS
 
