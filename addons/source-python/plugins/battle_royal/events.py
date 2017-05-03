@@ -63,6 +63,8 @@ def _on_kill_events(event_data):
         attacker = _battle_royal.get_player(Player(index_from_userid(event_data['attacker'])))
 
     victim = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
+    if victim is None:
+        return
 
     # Add player to dead
     _battle_royal.remove_player(victim)

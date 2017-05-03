@@ -30,7 +30,7 @@ class BattleRoyal:
         self._players_backpack_ents = dict()
         self._players = dict()
         self._dead_players = dict()
-        self._groups = dict()
+        self._teams = dict()
         self._gas_wave = []
 
     @property
@@ -153,7 +153,7 @@ class BattleRoyal:
         self.status = True
 
         # Add repeater to spread gas
-        self.spread_gas()
+        # self.spread_gas()
 
     def end(self):
         self.status = False

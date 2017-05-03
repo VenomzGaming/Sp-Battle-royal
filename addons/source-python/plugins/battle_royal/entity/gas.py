@@ -35,7 +35,7 @@ class Gas:
                 victim.take_damage(self._damage)
 
     def _effect(self):
-        self._effect = TempEntity('BeamRingPoint', center=self._player.origin, start_radius=self.radius,
+        self._effect = TempEntity('BeamRingPoint', center=self._location, start_radius=self._radius,
             end_radius=self._radius+1, model_index=_gas_model.index, halo_index=_gas_model.index,
             life_time=self._duration, amplitude=0, red=0, green=255, blue=0, alpha=255, flags=0,
             start_width=10, end_width=10)
@@ -47,4 +47,4 @@ class Gas:
 
     def stop(self):
         self._repeater.stop()
-        sefl._effect.remove()
+        self._effect.remove()

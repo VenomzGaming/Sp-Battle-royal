@@ -17,7 +17,7 @@ class BattleRoyalGroup:
         self._owner = owner
         self._name = name
         self._players = []
-        self._players.add_player(owner)
+        self.add_player(owner)
 
     @property
     def owner(self):

@@ -24,7 +24,6 @@ class Item:
         if self.models is not None:
             entity.model = Model(self.models)
         entity.spawn_flags = 256
-        entity.physics_object.collision_enabled = False
         # entity.solid_type = 6
         # entity.collision_group = 1
         entity.spawn()
