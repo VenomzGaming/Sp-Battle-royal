@@ -13,7 +13,7 @@ __all__ = (
 
 class Inventory:
 
-    def __init__(self, player):
+    def __init__(self, player=None):
         self.player = player
         self._items = dict()
 
@@ -26,7 +26,6 @@ class Inventory:
 
     def _add_weight(self, item):
         self.player.total_weight -= (item.weight * item.amount)
-        SayText2('2 ' + str(self.player.total_weight)).send()
 
     def _remove_weight(self, item):
         self.player.total_weight += (item.weight * item.amount)
@@ -35,7 +34,7 @@ class Inventory:
         if not isinstance(item, Item):
             raise ValueError('Argument must be an Item')
 
-        if not self._can_add(item):
+        if self.player is not None and not self._can_add(item):
             SayText2('Weight exceed').send()
             return False
 
@@ -47,7 +46,8 @@ class Inventory:
             player_item.amount += item.amount
             self._items[item.name] = player_item
 
-        self._add_weight(item)
+        if self.player is not None:
+            self._add_weight(item)
         return True
 
     def _remove_item(self, item):
@@ -73,4 +73,6 @@ class Inventory:
         else:
             self._remove_item(item)
 
-        self._remove_weight(item) 
+        if self.player is not None:
+            self._remove_weight(item) 
+        return True

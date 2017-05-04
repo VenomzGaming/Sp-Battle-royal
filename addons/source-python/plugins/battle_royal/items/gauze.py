@@ -10,8 +10,8 @@ class Gauze(Care):
     name = 'Gauze'
     health = 10
     weight = 1
-    # models = 'models/props/props_crates/wooden_crate_32x64.mdl'
     models = 'models/props/de_inferno/hr_i/concrete_bag_a/concrete_bag_a.mdl'
+    # models = 'models/battle_royal/items/medkit_small.mdl'
 
     def _repeat(self):
         add_health = self.health // 5

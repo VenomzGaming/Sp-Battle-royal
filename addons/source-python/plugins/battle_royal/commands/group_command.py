@@ -100,7 +100,7 @@ class CommandGroup:
         else:
             if self.target is not None:
                 group_menu.sender = self.caller
-                group_menu.send(self.target)
+                group_menu.send(self.target.index)
             else:
                 SayText2('Player with ' + self.filter + ' is not found').send()
 

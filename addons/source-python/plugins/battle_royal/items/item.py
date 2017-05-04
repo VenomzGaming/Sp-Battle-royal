@@ -25,7 +25,8 @@ class Item:
             entity.model = Model(self.models)
         entity.spawn_flags = 256
         # entity.solid_type = 6
-        # entity.collision_group = 1
+        entity.solid_flags = 152
+        entity.collision_group = 11
         entity.spawn()
         return entity
 

@@ -32,6 +32,8 @@ def unload():
 
 downloadables = Downloadables()
 downloadables.add_directory('materials/overlays/battle_royal')
+downloadables.add_directory('models/battle_royal')
+downloadables.add_directory('materials/models/battle_royal')
 
 
 ## MENUS
@@ -39,14 +41,14 @@ downloadables.add_directory('materials/overlays/battle_royal')
 # MAIN MENU
 @SayCommand(['!battleroyal', '!br', '/battleroyal', '/br'])
 def _open_main_menu(command, index, team_only=None):
-    main_menu.send()
+    main_menu.send(index)
     return CommandReturn.BLOCK
 
 
 # INVENTORY MENU
 @SayCommand(['!inventory', '!inv', '/inventory', '/inv'])
 def _open_inventory_menu(command, index, team_only=None):
-    inventory_menu.send()
+    inventory_menu.send(index)
     return CommandReturn.BLOCK
 
 
