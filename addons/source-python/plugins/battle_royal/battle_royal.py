@@ -19,7 +19,6 @@ from .info import info
 from .menus import main_menu
 from .menus.inventory import inventory_menu
 
-
 def load():
     pass
 
@@ -34,6 +33,8 @@ downloadables = Downloadables()
 downloadables.add_directory('materials/overlays/battle_royal')
 downloadables.add_directory('models/battle_royal')
 downloadables.add_directory('materials/models/battle_royal')
+downloadables.add_directory('models/parachute')
+downloadables.add_directory('materials/models/parachute')
 
 
 ## MENUS

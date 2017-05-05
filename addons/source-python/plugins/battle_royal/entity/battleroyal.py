@@ -11,8 +11,10 @@ from mathlib import Vector
 from .player import BattleRoyalPlayer
 from .gas import Gas
 from .. import globals
+from ..configs import _configs
 from ..items.item import Item
 from ..utils.spawn_manager import SpawnManager
+from ..utils.parachute import parachute
 
 ## ALL DECLARATIONS
 
@@ -128,17 +130,23 @@ class BattleRoyal:
         #     locations.remove(vector)
 
     def spread_gas(self):
-        # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 min)
+        # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 mini)
+        # Maybe create a listener 
+        start = _configs['time_before_spreading'].get_int()
+        waiting = _configs['time_between_spreading'].get_int()
+
         wave_one = Gas()
-        wave_one.spread(60)
+        wave_one.spread(start)
         self._gas_wave.append(wave_one)
+        start += waiting
 
         wave_two = Gas()
-        wave_two.spread(120)
+        wave_two.spread(start)
         self._gas_wave.append(wave_two)
+        start += waiting
 
         wave_three = Gas()
-        wave_three.spread(120)
+        wave_three.spread(start)
         self._gas_wave.append(wave_three)
 
 
@@ -151,12 +159,19 @@ class BattleRoyal:
         self.spawn_item()
         self.spawn_players()
         self.status = True
+        if bool(_configs['parachute_enable'].get_int()):
+            parachute.enable = True
+            Delay(_configs['parachute_duration'].get_int(), parachute.__setattr__, ('enable', False,))
+        else:
+            parachute.enable = False
+
 
         # Add repeater to spread gas
         # self.spread_gas()
 
     def end(self):
         self.status = False
+        parachute.enable = False
 
         # Remove all spawned entities
         SayText2('SPAWNED ENT : ' + str(self._items_ents)).send()
