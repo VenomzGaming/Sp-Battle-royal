@@ -7,6 +7,7 @@ from players.entity import Player
 from listeners.tick import Delay
 
 from ..entity.battleroyal import _battle_royal
+from ..config import _configs
 # from ..globals import _match_hud
 
 
@@ -18,8 +19,23 @@ __all__ = (
 
 class BattleRoyalHud:
 
+    # _timer_match_begin = _configs['waiting_match_begin'].get_int()
+    warmup_hud = None
     match_hud = None
     _player_hud = dict()
+
+    @classmethod
+    def warmup(cls):
+        # text = 'Match started in {}'.format(cls._timer_match_begin) 
+        text = 'Are you prepared ?!'
+
+        cls.match_hud = HudMsg(
+            message=text,
+            hold_time=1,
+            x=-1,
+            y=-0.7,
+        ).send()
+        # cls._timer_match_begin -= 1
 
     @classmethod
     def match_info(cls):

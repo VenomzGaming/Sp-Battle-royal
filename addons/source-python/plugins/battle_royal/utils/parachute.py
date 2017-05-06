@@ -10,10 +10,11 @@ from filters.players import PlayerIter
 from listeners import OnTick
 from listeners.tick import Delay
 from mathlib import Vector
+from messages import SayText2
 from players.constants import PlayerStates, PlayerButtons
 from players.entity import Player
 
-from .configs import _configs
+from ..config import _configs
 
 
 ## DECLARATION
@@ -33,7 +34,7 @@ class Parachute:
     ]
 
     def __init__(self):
-        self._enable = True
+        self._enable = False
         self._parachutes = {}
 
     def set_enable(self, state):
@@ -46,7 +47,7 @@ class Parachute:
 
     @property
     def parachutes(self):
-        self._parachutes
+        return self._parachutes
 
     def open(self, player):
         entity = Entity.create('prop_dynamic_override')
@@ -58,6 +59,13 @@ class Parachute:
 
     def close(self, player):
         self._parachutes.pop(player.userid)[1].remove()
+
+    def disable(self):
+        for player, entity_parachute in self.parachutes.values():
+            entity_parachute.remove()
+        self._parachutes.clear()
+        self._enable = False
+
 
 
 parachute = Parachute()
@@ -74,21 +82,19 @@ def _on_tick_listener():
         for player, entity_parachute in parachute.parachutes.values():
             entity_parachute.teleport(player.origin, player.angles, None)
 
-        for player in PlayerIter(is_filters=['alive'], not_filters=['bot']):
+        for player in PlayerIter('alive'):
             velocity = player.fall_velocity 
 
-            # Is the player not falling?
-            if (velocity < 1.0 or not player.buttons & getattr(PlayerButtons, _configs['parachute_button'].get_float()) or player.move_type & MoveType.LADDER or player.flags & PlayerStates.INWATER):
+            if (velocity < 1.0 or player.move_type & MoveType.LADDER or player.flags & PlayerStates.INWATER or player.buttons & PlayerButtons.JUMP):
                 if player.userid in parachute.parachutes:
                     parachute.close(player)
                 continue
 
             # Revert the falling velocity to slow down the player speed...
-            player.base_velocity = Vector(0, 0, velocity + (_configs['parachute_button'].get_string().upper() * -1))
+            player.base_velocity = Vector(0, 0, velocity + (_configs['parachute_falling_speed'].get_float() * -1))
 
             if player.userid not in parachute.parachutes:
                 parachute.open(player)
-
     except Exception as e:
         echo_console(str(e))
 

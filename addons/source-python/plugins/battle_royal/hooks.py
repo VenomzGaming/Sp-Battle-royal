@@ -48,15 +48,17 @@ def _on_join_team(command, index):
 
 @OnTick
 def _on_tick():
-    if not _battle_royal.status: 
-        return
+    if _battle_royal.is_warmup:
+        BattleRoyalHud.warmup()
 
-    BattleRoyalHud.match_info()
+    if _battle_royal.match_begin: 
+        BattleRoyalHud.match_info()
+
+        # Find a way to hide question mark on radar
+        for player in PlayerIter('alive'):
+            player.set_property_bool("m_bSpotted", False)
+            BattleRoyalHud.player_weight(player)
     
-    # Find a way to hide question mark on radar
-    for player in PlayerIter('alive'):
-        player.set_property_bool("m_bSpotted", False)
-        BattleRoyalHud.player_weight(player)
 
 
 @OnEntityDeleted
@@ -120,7 +122,7 @@ def _on_pick_up_item(stack):
     input_data = make_object(InputData, stack[1])
     player = make_object(Player, input_data.activator)
 
-    if player is None or _battle_royal.status != True or entity.index not in _battle_royal.items_ents:
+    if player is None or _battle_royal.match_begin != True or entity.index not in _battle_royal.items_ents:
         return
 
     br_player = _battle_royal.get_player(player)
@@ -155,6 +157,10 @@ def _pre_damage_events(stack_data):
     take_damage_info = make_object(TakeDamageInfo, stack_data[1])
 
     if not take_damage_info.attacker:
+        return
+
+    if not _battle_royal.match_begin or _battle_royal.is_warmup:
+        take_damage_info.damage = 0
         return
 
     entity = Entity(take_damage_info.attacker)

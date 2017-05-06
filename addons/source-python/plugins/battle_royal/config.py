@@ -17,6 +17,17 @@ _configs = dict()
 with ConfigManager(info.name) as _config:
 
     #
+    # Match config
+    #
+    _config.section('Match')
+
+    _configs['waiting_match_begin'] = _config.cvar(
+        'waiting_match_begin', 30,
+        description='Waiting moment before match begin.'
+    )
+
+
+    #
     # Parachute config
     #
     _config.section('Parachute')
@@ -36,10 +47,11 @@ with ConfigManager(info.name) as _config:
         description='Defines the button to use the parachute.'
     )
 
-    _configs['parachute_button'] = _config.cvar(
+    _configs['parachute_falling_speed'] = _config.cvar(
         'parachute_falling_speed', '10',
         description='Defines the falling speed of the parachute.'
     )
+
 
     #
     # Gas config

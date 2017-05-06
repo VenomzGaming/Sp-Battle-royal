@@ -28,12 +28,10 @@ class WeaponItem(Item):
         return weapon
 
     def equip(self, player, set_ammo=False):
-        SayText2('Equip').send()
         weapon = player.get_weapon(is_filters=self.slot)
         if weapon is None:
             can_used = self.use(player, set_ammo)
             if can_used:
-                SayText2('Can used').send()
                 player.inventory.remove(self)
 
     def change(self, player, weapon):
@@ -54,6 +52,9 @@ class WeaponItem(Item):
     def use(self, player, set_ammo=False, callback=on_item_given):
         def delay_callback():
             weapon = self.create(player.origin, set_ammo)
+            # weapon_name = 'weapon_' + self.__class__.__name__.lower()
+            # weapon_pointer = player.give_named_item(weapon_name, 0, None, True)
+            # weapon = Entity(index_from_pointer(weapon_pointer))
             _authorize_weapon.append(weapon.index)
             callback(player, weapon)
      
@@ -63,7 +64,6 @@ class WeaponItem(Item):
             return True
         else:
             if not set_ammo:
-                SayText2('Not Loot').send()
                 self.change(player, weapon)
                 return False
             else:

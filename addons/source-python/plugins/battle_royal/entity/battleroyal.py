@@ -5,13 +5,14 @@ import random
 from engines.server import global_vars
 from entities.entity import Entity
 from filters.players import PlayerIter
+from listeners.tick import Delay
 from messages import SayText2
 from mathlib import Vector
 
 from .player import BattleRoyalPlayer
 from .gas import Gas
 from .. import globals
-from ..configs import _configs
+from ..config import _configs
 from ..items.item import Item
 from ..utils.spawn_manager import SpawnManager
 from ..utils.parachute import parachute
@@ -27,7 +28,8 @@ __all__ = (
 class BattleRoyal:
 
     def __init__(self):
-        self.status = False
+        self.is_warmup = False
+        self.match_begin = False
         self._items_ents = dict()
         self._players_backpack_ents = dict()
         self._players = dict()
@@ -99,6 +101,10 @@ class BattleRoyal:
         return self._gas_wave  
 
 
+    def _god_mode(self, enable):
+        for br_player in self._players.values():
+            br_player.godmode = enable
+
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
         globals.items_spawn_manager = SpawnManager('item', global_vars.map_name)
@@ -118,13 +124,13 @@ class BattleRoyal:
         else:
             SayText2('Any spawn point on this map.').send()
     
-
     def spawn_players(self):
         # For the moment spawn player in random spawn on map (After spawn user with parachute)
         pass
         # globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
         # locations = globals.players_spawn_manager.get_locations
-        # for player in PlayerIter('alive'):
+        # for player in self._players.values():
+        #     parachute.open(player)
         #     vector = random.choice(locations)
         #     player.origin = vector
         #     locations.remove(vector)
@@ -149,28 +155,31 @@ class BattleRoyal:
         wave_three.spread(start)
         self._gas_wave.append(wave_three)
 
-
     def warmup(self):
-        # Maybe implement the warmup directly in map. A waiting for 30s (god mod player) before begining of the round
-        self.status = False
-        pass
+        self.is_warmup = True
+        self._god_mode(True)
 
     def start(self):
+        SayText2('Match start !').send()
+        self.is_warmup = False
+        self.match_begin = True
+        self._god_mode(False)
+
         self.spawn_item()
         self.spawn_players()
-        self.status = True
+
         if bool(_configs['parachute_enable'].get_int()):
             parachute.enable = True
-            Delay(_configs['parachute_duration'].get_int(), parachute.__setattr__, ('enable', False,))
+            Delay(_configs['parachute_duration'].get_int(), parachute.disable)
         else:
             parachute.enable = False
-
 
         # Add repeater to spread gas
         # self.spread_gas()
 
     def end(self):
-        self.status = False
+        self.match_begin = False
+        self.is_warmup = False
         parachute.enable = False
 
         # Remove all spawned entities
