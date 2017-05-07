@@ -40,10 +40,6 @@ downloadables.add_directory('materials/models/battle_royal')
 downloadables.add_directory('models/parachute')
 downloadables.add_directory('materials/models/parachute')
 
-# VEHICULES
-downloadables.add_directory('models/props_vehicules')
-downloadables.add_directory('materials/models/props_vehicules')
-
 
 ## MENUS
 
