@@ -37,7 +37,7 @@ class SpawnManager(dict):
         super().__setitem__(name, location)
 
     @property
-    def get_locations(self):
+    def locations(self):
         return list(self.values())
 
     def _load_location(self):

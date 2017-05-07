@@ -31,10 +31,18 @@ def unload():
 
 downloadables = Downloadables()
 downloadables.add_directory('materials/overlays/battle_royal')
+
+# ITEMS
 downloadables.add_directory('models/battle_royal')
 downloadables.add_directory('materials/models/battle_royal')
+
+# PARACHUTE
 downloadables.add_directory('models/parachute')
 downloadables.add_directory('materials/models/parachute')
+
+# VEHICULES
+downloadables.add_directory('models/props_vehicules')
+downloadables.add_directory('materials/models/props_vehicules')
 
 
 ## MENUS
@@ -71,6 +79,14 @@ def _open_inventory(command, index, team_only=None):
     SayText2('Show map').send()
     return CommandReturn.BLOCK
 
+
+# Test
+@SayCommand('!position')
+def _open_inventory(command, index, team_only=None):
+    player = Player(index)
+    vector = player.view_coordinates
+    SayText2(str(vector)).send()
+    return CommandReturn.BLOCK
 
 ## ADMIN
 

@@ -108,7 +108,7 @@ class BattleRoyal:
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
         globals.items_spawn_manager = SpawnManager('item', global_vars.map_name)
-        locations = globals.items_spawn_manager.get_locations
+        locations = globals.items_spawn_manager.locations
         if len(locations) != 0:
             for classname, cls in Item.get_subclass_dict().items():
                 if len(locations) == 0:
@@ -128,7 +128,7 @@ class BattleRoyal:
         # For the moment spawn player in random spawn on map (After spawn user with parachute)
         pass
         # globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
-        # locations = globals.players_spawn_manager.get_locations
+        # locations = globals.players_spawn_manager.locations
         # for player in self._players.values():
         #     parachute.open(player)
         #     vector = random.choice(locations)
@@ -158,6 +158,13 @@ class BattleRoyal:
     def warmup(self):
         self.is_warmup = True
         self._god_mode(True)
+        # from engines.precache import Model
+        # heli = Entity.create('prop_dynamic')
+        # location = Vector(637.66650390625, 322.892578125, 256.03125)
+        # heli.origin = location
+        # heli.model = Model('models/props_vehicles/helicopter_rescue.mdl')
+        # heli.solid_type = 6
+        # heli.spawn()
 
     def start(self):
         SayText2('Match start !').send()

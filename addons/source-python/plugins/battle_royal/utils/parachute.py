@@ -90,6 +90,8 @@ def _on_tick_listener():
                     parachute.close(player)
                 continue
 
+            SayText2('Velocity : ' + str(velocity)).send()
+
             # Revert the falling velocity to slow down the player speed...
             player.base_velocity = Vector(0, 0, velocity + (_configs['parachute_falling_speed'].get_float() * -1))
 
