@@ -69,10 +69,6 @@ def _on_kill_events(event_data):
     _battle_royal.remove_player(victim)
     _battle_royal.add_dead_player(victim)
 
-    # Drop player backpack to be taken by another player
-    entity = victim.drop_inventory()
-    _battle_royal.add_item_ent(entity, victim.inventory)
-
 
 @Event('player_connect')
 def _on_player_connect(event_data):

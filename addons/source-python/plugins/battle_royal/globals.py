@@ -7,6 +7,7 @@ __all__ = (
     '_authorize_weapon',
     'items_spawn_manager',
     'players_spawn_manager',
+    'air_drop_spawn_manager',
 )
 
 ## GLOBALS
@@ -24,3 +25,6 @@ items_spawn_manager = None
 
 # Players spawn manager
 players_spawn_manager = None
+
+# Players spawn manager
+air_drop_spawn_manager = None

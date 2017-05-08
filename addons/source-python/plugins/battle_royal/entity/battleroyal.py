@@ -135,6 +135,18 @@ class BattleRoyal:
         #     player.origin = vector
         #     locations.remove(vector)
 
+    def _spawn_in_sky(self):
+        pass
+
+    def _random_spawn(self):
+        globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
+        locations = globals.players_spawn_manager.locations
+        for player in self._players.values():
+            parachute.open(player)
+            vector = random.choice(locations)
+            player.origin = vector
+            locations.remove(vector)
+
     def spread_gas(self):
         # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 mini)
         # Maybe create a listener 

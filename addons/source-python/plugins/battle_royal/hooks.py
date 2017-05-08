@@ -1,5 +1,8 @@
 ## IMPORTS
 
+import memory
+
+from _players._voice import voice_server
 from commands import CommandReturn
 from commands.client import ClientCommand
 from entities import TakeDamageInfo
@@ -11,6 +14,7 @@ from entities.hooks import EntityPreHook, EntityPostHook, EntityCondition
 from filters.players import PlayerIter
 from listeners import OnTick, OnEntityCreated, OnEntityDeleted
 from memory import make_object
+from memory.hooks import PreHook
 from messages import SayText2
 from weapons.entity import Weapon
 from players.entity import Player
@@ -40,7 +44,6 @@ def _on_join_game(command, index):
 
 @ClientCommand('jointeam')
 def _on_join_team(command, index):
-    SayText2('Can\'t Switch').send()
     return CommandReturn.BLOCK
 
 
@@ -81,7 +84,11 @@ def _on_entity_delete(entity):
 
 # MANAGE HOOK
 
-@EntityPreHook(EntityCondition.is_human_player, 'bump_weapon')
+@EntityPreHook(EntityCondition.is_player, '_spawn')
+def _on_spawn_players(stack):
+    pass
+
+@EntityPreHook(EntityCondition.is_player, 'bump_weapon')
 def _on_weapon_bump(stack):
     player = make_object(Player, stack[0])
     weapon = make_object(Entity, stack[1])
@@ -91,7 +98,7 @@ def _on_weapon_bump(stack):
     _authorize_weapon.remove(weapon.index)  
 
 
-@EntityPreHook(EntityCondition.is_human_player, 'drop_weapon')
+@EntityPreHook(EntityCondition.is_player, 'drop_weapon')
 def _on_weapon_drop(stack):
     player = make_object(Player, stack[0])
     br_player = _battle_royal.get_player(player)
@@ -106,13 +113,6 @@ def _on_weapon_drop(stack):
         _battle_royal.add_player(br_player)
     else:
         return False
-    # SayText2('Item ' + str(item.name)).send()
-    # Find why it crashed (when creating entity)
-    # entity = br_player.drop(item)
-    # SayText2('DROP : ' + str(entity.index)).send()
-    # SayText2(str(_battle_royal.items_ents)).send()
-    # _battle_royal.add_item_ent(entity, item)
-    # SayText2(str(_battle_royal.items_ents)).send()
 
 
 @EntityPreHook(EntityCondition.equals_entity_classname('prop_physics_override'), 'use')
@@ -175,7 +175,29 @@ def _pre_damage_events(stack_data):
     # Maybe add destroy armor before damaging player if sht is in head or body
     # if victim.armor > 0:
     #     take_damage_info.damage = victim.armor - take_damage_info.damage
+    
+
+    if victim.health - take_damage_info.damage <= 0:
+        # Drop player backpack to be taken by another player
+        entity = victim.drop_inventory()
+        _battle_royal.add_item_ent(entity, victim.inventory)
 
     # Add hit marker on hit (maybe color in function of hit armor or health)
     BattleRoyalHud.hitmarker(attacker)
+
+## VOICE HOOK
+
+# @PreHook(memory.get_virtual_function(voice_server, 'SetClientListening'))
+# def _pre_set_client_listening(args):
+#     receiver = Player(args[1])
+#     sender = args[2]
+
+#     # SayText2(str(args)).send()
+#     # SayText2(str(receiver.name)).send()
+#     # SayText2(str(sender)).send()
+#     # for player in PlayerIter('alive'):
+#     #     if receiver.origin.get_distance(player.origin) <= 1000:
+#     #         player.unmute(receiver)
+#     #     else:
+#     #         player.mute(receiver)
             
