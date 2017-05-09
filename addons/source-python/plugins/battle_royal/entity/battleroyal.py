@@ -125,31 +125,33 @@ class BattleRoyal:
             SayText2('Any spawn point on this map.').send()
     
     def spawn_players(self):
-        # For the moment spawn player in random spawn on map (After spawn user with parachute)
-        pass
-        # globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
-        # locations = globals.players_spawn_manager.locations
-        # for player in self._players.values():
-        #     parachute.open(player)
-        #     vector = random.choice(locations)
-        #     player.origin = vector
-        #     locations.remove(vector)
+        spawn_type = _configs['spawn_player_type'].get_int()
+        if spawn_type == 0 or spawn_type == 1:
+            if not parachute.enable:
+                parachute.enable = True
+            self._random_spawn(type_spawn)     
+        else:
+            if not parachute.enable:
+                parachute.enable = True
+            self._spawn_in_heli() 
 
-    def _spawn_in_sky(self):
+    def _spawn_in_heli(self):
         pass
 
-    def _random_spawn(self):
+    def _random_spawn(self, type_spawn):
         globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
         locations = globals.players_spawn_manager.locations
         for player in self._players.values():
-            parachute.open(player)
             vector = random.choice(locations)
             player.origin = vector
             locations.remove(vector)
+            
+            if type_spawn == 1:
+                parachute.open(player)
 
     def spread_gas(self):
         # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 mini)
-        # Maybe create a listener 
+        # Maybe create a listener to start another gas spreading after the end of the following
         start = _configs['time_before_spreading'].get_int()
         waiting = _configs['time_between_spreading'].get_int()
 
@@ -157,15 +159,6 @@ class BattleRoyal:
         wave_one.spread(start)
         self._gas_wave.append(wave_one)
         start += waiting
-
-        wave_two = Gas()
-        wave_two.spread(start)
-        self._gas_wave.append(wave_two)
-        start += waiting
-
-        wave_three = Gas()
-        wave_three.spread(start)
-        self._gas_wave.append(wave_three)
 
     def warmup(self):
         self.is_warmup = True
@@ -184,14 +177,14 @@ class BattleRoyal:
         self.match_begin = True
         self._god_mode(False)
 
-        self.spawn_item()
-        self.spawn_players()
-
         if bool(_configs['parachute_enable'].get_int()):
             parachute.enable = True
             Delay(_configs['parachute_duration'].get_int(), parachute.disable)
         else:
             parachute.enable = False
+
+        self.spawn_item()
+        self.spawn_players()
 
         # Add repeater to spread gas
         # self.spread_gas()

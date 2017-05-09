@@ -26,6 +26,11 @@ with ConfigManager(info.name) as _config:
         description='Waiting moment before match begin.'
     )
 
+    _configs['spawn_player_type'] = _config.cvar(
+        'spawn_player_type', 1,
+        description='0 - Spawn at random position one the ground | 1 - Spawn in sky with parachute | 1 - Spawn in helicopter.'
+    )
+
 
     #
     # Parachute config
@@ -40,11 +45,6 @@ with ConfigManager(info.name) as _config:
     _configs['parachute_duration'] = _config.cvar(
         'parachute_duration', 30,
         description='Defines enable time to use parachute after round start.'
-    )
-
-    _configs['parachute_button'] = _config.cvar(
-        'parachute_button', 'SPEED',
-        description='Defines the button to use the parachute.'
     )
 
     _configs['parachute_falling_speed'] = _config.cvar(
