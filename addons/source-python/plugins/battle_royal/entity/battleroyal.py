@@ -125,15 +125,16 @@ class BattleRoyal:
             SayText2('Any spawn point on this map.').send()
     
     def spawn_players(self):
-        spawn_type = _configs['spawn_player_type'].get_int()
-        if spawn_type == 0 or spawn_type == 1:
-            if not parachute.enable:
-                parachute.enable = True
-            self._random_spawn(type_spawn)     
-        else:
-            if not parachute.enable:
-                parachute.enable = True
-            self._spawn_in_heli() 
+        pass
+        # spawn_type = _configs['spawn_player_type'].get_int()
+        # if spawn_type == 0 or spawn_type == 1:
+        #     if not parachute.enable:
+        #         parachute.enable = True
+        #     self._random_spawn(spawn_type)     
+        # else:
+        #     if not parachute.enable:
+        #         parachute.enable = True
+        #     self._spawn_in_heli() 
 
     def _spawn_in_heli(self):
         pass

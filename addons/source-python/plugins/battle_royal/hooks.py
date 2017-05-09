@@ -180,6 +180,7 @@ def _pre_damage_events(stack_data):
     if victim.health - take_damage_info.damage <= 0:
         # Drop player backpack to be taken by another player
         entity = victim.drop_inventory()
+        SayText2('2' + str(entity)).send()
         _battle_royal.add_item_ent(entity, victim.inventory)
 
     # Add hit marker on hit (maybe color in function of hit armor or health)

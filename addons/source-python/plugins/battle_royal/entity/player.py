@@ -2,6 +2,7 @@
 
 from engines.precache import Model
 from entities.entity import Entity
+from listeners.tick import Delay
 from mathlib import Vector
 from messages import SayText2
 from players.entity import Player
@@ -75,7 +76,8 @@ class BattleRoyalPlayer(Player):
         entity = Entity.create('prop_physics_override')
         entity.origin = self.origin
         entity.model = Model('models/props/props_crates/wooden_crate_32x64.mdl')
-        Delay(0.5, entity.spawn)
+        Delay(1, entity.spawn)
+        SayText2('1' + str(entity))
         return entity
 
     def pick_up(self, item):
