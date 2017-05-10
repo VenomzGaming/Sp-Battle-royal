@@ -31,7 +31,6 @@ class BattleRoyal:
         self.is_warmup = False
         self.match_begin = False
         self._items_ents = dict()
-        self._players_backpack_ents = dict()
         self._players = dict()
         self._dead_players = dict()
         self._teams = dict()
@@ -62,16 +61,6 @@ class BattleRoyal:
 
     def remove_item_ent(self, entity):
         del self._items_ents[entity.index]
-
-    @property
-    def players_backpack_ents(self):
-        return self._players_backpack_ents   
-
-    def get_player_backpack_ent(self, entity):
-        return self._players_backpack_ents[entity.index] if entity.index in self._players_backpack_ents else None
-
-    def add_player_backpack_ent(self, entity):
-        self._players_backpack_ents[entity.index] = entity
 
     @property
     def players(self):
@@ -196,20 +185,7 @@ class BattleRoyal:
         parachute.enable = False
 
         # Remove all spawned entities
-        SayText2('SPAWNED ENT : ' + str(self._items_ents)).send()
-        all_entities = self._items_ents.copy()
-        for index, item in all_entities.items():
-            SayText2('Index : ' + str(index)).send()
-            Entity(index).remove()
-
-        # self._items_ents.clear()
-
-        # Remove all spawned backpack entities
-        # SayText2(str(self._players_backpack_ents)).send()
-        for index, item in self._players_backpack_ents.items():
-            Entity(index).remove()
-
-        self._players_backpack_ents.clear()
+        Delay(1, self._remove_items)
 
         # Remove gas
         for gas in self._gas_wave:
@@ -220,6 +196,14 @@ class BattleRoyal:
         self._teams.clear()
         self._dead_players.clear()
         self._gas_wave.clear()
+
+    def _remove_items(self):
+        all_entities = self._items_ents.copy()
+        for index, item in all_entities.items():
+            Entity(index).remove()
+
+        self._items_ents.clear()
+
         
 ## GLOBALS
 

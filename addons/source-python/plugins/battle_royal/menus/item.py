@@ -12,7 +12,7 @@ from ..items.item import Item
 from ..entity.player import Player as BrPlayer
 
 __all__ = (
-    'item_menu'
+    'item_menu',
 )
 
 

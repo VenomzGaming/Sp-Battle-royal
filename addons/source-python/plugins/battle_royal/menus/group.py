@@ -10,7 +10,7 @@ from ..entity.battleroyal import _battle_royal
 from ..entity.player import Player as BrPlayer
 
 __all__ = (
-    'group_menu'
+    'group_menu',
 )
 
 

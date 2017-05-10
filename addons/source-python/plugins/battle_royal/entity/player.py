@@ -54,30 +54,15 @@ class BattleRoyalPlayer(Player):
     @property
     def inventory(self):
         return self._inventory
-
-    # def _on_drop_inventory(player):
-    #     SayText2('Player {player} has drop his inventory !'.format(player=player.name)).send()
-
-    # def drop_inventory(self, callback=_on_drop_inventory):
-    #     def delay_callback():
-    #         entity = Entity.create('prop_physics_override')
-    #         entity.origin = self.origin
-    #         entity.model = Model('models/props/props_crates/wooden_crate_32x64.mdl')
-    #         entity.spawn()
-    #         SayText2(str(entity)).send()
-    #         callback(self)
-    #         return entity
-
-    #     entity = self.delay(0, delay_callback)
-    #     SayText2(str(entity)).send()
-    #     return entity
     
     def drop_inventory(self):
         entity = Entity.create('prop_physics_override')
         entity.origin = self.origin
         entity.model = Model('models/props/props_crates/wooden_crate_32x64.mdl')
-        Delay(1, entity.spawn)
-        SayText2('1' + str(entity))
+        entity.spawn_flags = 256
+        entity.solid_flags = 152
+        entity.collision_group = 11
+        Delay(0.1, entity.spawn)
         return entity
 
     def pick_up(self, item):

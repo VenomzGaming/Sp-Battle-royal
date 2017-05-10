@@ -12,7 +12,7 @@ from ..menus.item import item_menu
 
 
 __all__ = (
-    'inventory_menu'
+    'inventory_menu',
 )
 
 

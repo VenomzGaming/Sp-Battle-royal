@@ -86,7 +86,12 @@ def _on_entity_delete(entity):
 
 @EntityPreHook(EntityCondition.is_player, '_spawn')
 def _on_spawn_players(stack):
+    # Manage player spawn
     pass
+
+@EntityPreHook(EntityCondition.is_player, 'buy_internal')
+def _on_buy(stack):
+    return False
 
 @EntityPreHook(EntityCondition.is_player, 'bump_weapon')
 def _on_weapon_bump(stack):
@@ -129,10 +134,9 @@ def _on_pick_up_item(stack):
     item = _battle_royal.get_item_ent(entity)
     
     if isinstance(item, Inventory):
-        SayText2('Take backpack ' + br_player.name).send()
         backpack_menu.entity = entity
         backpack_menu.backpack = item
-        backpack_menu.send()
+        backpack_menu.send(player.index)
     else:
         SayText2('1 ' + str(br_player.total_weight)).send()
         success = br_player.pick_up(item)
@@ -176,11 +180,9 @@ def _pre_damage_events(stack_data):
     # if victim.armor > 0:
     #     take_damage_info.damage = victim.armor - take_damage_info.damage
     
-
     if victim.health - take_damage_info.damage <= 0:
         # Drop player backpack to be taken by another player
         entity = victim.drop_inventory()
-        SayText2('2' + str(entity)).send()
         _battle_royal.add_item_ent(entity, victim.inventory)
 
     # Add hit marker on hit (maybe color in function of hit armor or health)

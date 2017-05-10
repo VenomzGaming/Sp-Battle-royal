@@ -89,7 +89,7 @@ def _on_player_disconnect(event_data):
     br_player = _battle_royal.get_player(player)
 
     # Remove player from group
-    if br_player.group is not None:
+    if hasattr(br_player, 'group') and br_player.group is not None:
         group = br_player.group
         br_player.group.remove_player(br_player)
         br_player.group = None
