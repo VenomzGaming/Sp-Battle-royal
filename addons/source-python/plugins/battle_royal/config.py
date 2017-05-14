@@ -31,6 +31,11 @@ with ConfigManager(info.name) as _config:
         description='0 - Spawn at random position one the ground | 1 - Spawn in sky with parachute | 1 - Spawn in helicopter.'
     )
 
+    _configs['voice_proximity'] = _config.cvar(
+        'voice_proximity', 1000,
+        description='Distance max to allow player to hear another player.'
+    )
+
 
     #
     # Parachute config

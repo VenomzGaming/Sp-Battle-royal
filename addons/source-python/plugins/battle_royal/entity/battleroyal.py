@@ -34,7 +34,6 @@ class BattleRoyal:
         self._players = dict()
         self._dead_players = dict()
         self._teams = dict()
-        self._gas_wave = []
 
     @property
     def teams(self):
@@ -85,10 +84,6 @@ class BattleRoyal:
     def add_dead_player(self, player):
         self._dead_players[player.userid] = player
 
-    @property
-    def gas(self):
-        return self._gas_wave  
-
 
     def _god_mode(self, enable):
         for br_player in self._players.values():
@@ -117,8 +112,6 @@ class BattleRoyal:
         pass
         # spawn_type = _configs['spawn_player_type'].get_int()
         # if spawn_type == 0 or spawn_type == 1:
-        #     if not parachute.enable:
-        #         parachute.enable = True
         #     self._random_spawn(spawn_type)     
         # else:
         #     if not parachute.enable:
@@ -129,15 +122,27 @@ class BattleRoyal:
         pass
 
     def _random_spawn(self, type_spawn):
-        globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
-        locations = globals.players_spawn_manager.locations
-        for player in self._players.values():
-            vector = random.choice(locations)
-            player.origin = vector
-            locations.remove(vector)
-            
-            if type_spawn == 1:
-                parachute.open(player)
+        if type_spawn == 1:
+            globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
+            locations = globals.players_spawn_manager.locations
+
+            if len(locations) != 0:
+                if not parachute.enable:
+                    parachute.enable = True
+
+                for player in self._players.values():
+                    vector = random.choice(locations)
+                    player.origin = vector
+                    locations.remove(vector)            
+                    parachute.open(player)
+            else:
+                parachute.enable = False
+                self._random_spawn(0) 
+        else:
+            for player in self._players.values():
+                # Use deathmatch random spawn point
+                player.spawn()
+
 
     def spread_gas(self):
         # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 mini)
@@ -147,8 +152,6 @@ class BattleRoyal:
 
         wave_one = Gas()
         wave_one.spread(start)
-        self._gas_wave.append(wave_one)
-        start += waiting
 
     def warmup(self):
         self.is_warmup = True
@@ -187,15 +190,10 @@ class BattleRoyal:
         # Remove all spawned entities
         Delay(1, self._remove_items)
 
-        # Remove gas
-        for gas in self._gas_wave:
-            gas.stop()
-
         # Clear dict and list
         self._players.clear()
         self._teams.clear()
         self._dead_players.clear()
-        self._gas_wave.clear()
 
     def _remove_items(self):
         all_entities = self._items_ents.copy()

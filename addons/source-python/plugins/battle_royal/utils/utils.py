@@ -1,9 +1,12 @@
 ## IMPORTS
 
+import memory
+
 from cvars import ConVar
 from filters.players import PlayerIter
 from messages import HudMsg, SayText2
 from players.entity import Player
+from players.voice import voice_server
 from listeners.tick import Delay
 
 from ..entity.battleroyal import _battle_royal
@@ -13,6 +16,7 @@ from ..config import _configs
 
 __all__ = (
     'BattleRoyalHud',
+    'set_proximity_listening',
 )
 
 ## BATTLE ROYAL HUD MANAGER
@@ -82,3 +86,13 @@ class BattleRoyalHud:
         _configs['hitmarker'] = 'overlays/battle_royal/hitmarker'
         player.client_command('r_screenoverlay {}'.format(_configs['hitmarker']))
         Delay(0.5, player.client_command, ('r_screenoverlay off',))
+
+
+## VOICE PROXIMITY
+
+def set_proximity_listening(player):
+    for other_player in PlayerIter('alive'):
+        if other_player.origin.get_distance(player.origin) <= _configs['voice_proximity'].get_int():
+            voice_server.set_client_listening(player.index, other_player.index, True)
+        else:
+            voice_server.set_client_listening(player.index, other_player.index, False)

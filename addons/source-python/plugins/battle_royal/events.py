@@ -19,7 +19,7 @@ from .config import _configs
 from .entity.battleroyal import _battle_royal
 from .entity.player import BattleRoyalPlayer
 from .items.item import Item
-from .utils.utils import BattleRoyalHud
+from .utils.utils import BattleRoyalHud, set_proximity_listening
 
 
 # HIDEHUD_RADAR = 1 << 12
@@ -53,6 +53,9 @@ def _on_round_end(event_data):
 
 @Event('player_spawn')
 def _on_player_spawn(event_data):
+    if event_data['userid'] == 0:
+        return
+
     player = Player(index_from_userid(event_data['userid']))
 
 
@@ -70,9 +73,12 @@ def _on_kill_events(event_data):
     _battle_royal.add_dead_player(victim)
 
 
-@Event('player_connect')
+@Event('player_connect_full')
 def _on_player_connect(event_data):
-    player = Player(index_from_userid(event_data['userid']))
+    if event_data['index'] == 0:
+        return
+
+    player = Player(event_data['index'])
 
     br_player = BattleRoyalPlayer(player.index, 50)
     if _battle_royal.match_begin:
@@ -98,5 +104,5 @@ def _on_player_disconnect(event_data):
             _battle_royal.remove_team(group)
             del group
 
-    _battle_royal.remove_player(player)
     BattleRoyalHud.remove_player(player)
+    _battle_royal.remove_player(player)

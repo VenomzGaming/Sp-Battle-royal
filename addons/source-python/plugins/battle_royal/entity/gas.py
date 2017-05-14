@@ -29,6 +29,26 @@ class Gas:
         self._duration = ConVar('mp_roundtime') if duration is None else duration
         self._effect = None
 
+    def set_damage(self, damage):
+        self._damage = damage
+
+    def get_damage(self, damage):
+        return self._damage
+
+    damage = property(get_damage, set_damage)
+
+    def set_radius(self, radius):
+        self._radius = radius
+
+    def get_radius(self, radius):
+        return self._radius
+
+    radius = property(get_radius, set_radius)
+
+    @property
+    def effect(self):
+        return self._effect
+
     def _damage_player(self):
         for victim in PlayerIter('alive'):
             if victim.origin.get_distance(self._location) >= self._radius:
