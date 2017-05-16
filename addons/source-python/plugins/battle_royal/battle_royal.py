@@ -18,13 +18,8 @@ from .hooks import *
 from .info import info
 from .menus import main_menu
 from .menus.inventory import inventory_menu
+from .utils.utils import get_map_height
 
-def load():
-    pass
-
-
-def unload():
-    pass
 
 
 ## DOWNLOAD
@@ -39,6 +34,18 @@ downloadables.add_directory('materials/models/battle_royal')
 # PARACHUTE
 downloadables.add_directory('models/parachute')
 downloadables.add_directory('materials/models/parachute')
+
+
+def load():
+    pass
+
+
+def unload():
+    pass
+
+## GLOBALS
+
+globals.MAP_HEIGHT = get_map_height()
 
 
 ## MENUS

@@ -12,6 +12,9 @@ __all__ = (
 
 ## GLOBALS
 
+# Constants by map
+MAP_HEIGHT = None
+
 # Weapon that can be given in 'bump_weapon' Hook
 _authorize_weapon = []
 

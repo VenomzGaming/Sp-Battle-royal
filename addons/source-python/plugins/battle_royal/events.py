@@ -1,5 +1,11 @@
 ## IMPORTS
 
+from engines.trace import engine_trace
+from engines.trace import ContentMasks
+from engines.trace import GameTrace
+from engines.trace import Ray
+from engines.trace import TraceFilterSimple
+from entities.constants import WORLD_ENTITY_INDEX
 from entities import TakeDamageInfo
 from entities.entity import Entity
 from entities.helpers import edict_from_index
@@ -7,6 +13,7 @@ from entities.hooks import EntityCondition
 from entities.hooks import EntityPreHook
 from events import Event
 from filters.players import PlayerIter
+from listeners import OnLevelInit
 from listeners.tick import Delay
 from mathlib import Vector
 from memory import make_object
@@ -15,14 +22,23 @@ from players import UserCmd
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_pointer
 
+from . import globals
 from .config import _configs
 from .entity.battleroyal import _battle_royal
 from .entity.player import BattleRoyalPlayer
 from .items.item import Item
-from .utils.utils import BattleRoyalHud, set_proximity_listening
+from .utils.spawn_manager import SpawnManager
+from .utils.utils import BattleRoyalHud, set_proximity_listening, get_map_height
 
 
 # HIDEHUD_RADAR = 1 << 12
+
+@OnLevelInit
+def _on_level_init(map_name):
+    #  Not sur about just load it on level init
+    # globals.items_spawn_manager = SpawnManager('item', map_name)
+    # globals.players_spawn_manager = SpawnManager('player', map_name)
+    globals.MAP_HEIGHT = get_map_height()
 
 
 @Event('round_start')

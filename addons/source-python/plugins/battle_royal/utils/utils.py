@@ -2,21 +2,28 @@
 
 import memory
 
-from cvars import ConVar
+from entities.entity import Entity
+from engines.trace import engine_trace
+from engines.trace import ContentMasks
+from engines.trace import GameTrace
+from engines.trace import Ray
+from engines.trace import TraceFilterSimple
+from entities.constants import WORLD_ENTITY_INDEX
 from filters.players import PlayerIter
 from messages import HudMsg, SayText2
+from mathlib import Vector
 from players.entity import Player
 from players.voice import voice_server
 from listeners.tick import Delay
 
 from ..entity.battleroyal import _battle_royal
 from ..config import _configs
-# from ..globals import _match_hud
 
 
 __all__ = (
     'BattleRoyalHud',
     'set_proximity_listening',
+    'get_map_height',
 )
 
 ## BATTLE ROYAL HUD MANAGER
@@ -96,3 +103,19 @@ def set_proximity_listening(player):
             voice_server.set_client_listening(player.index, other_player.index, True)
         else:
             voice_server.set_client_listening(player.index, other_player.index, False)
+
+## MAP
+
+def get_map_height():
+    worldspawn = Entity(WORLD_ENTITY_INDEX)
+    height = worldspawn.world_mins.z + worldspawn.world_maxs.z
+    origin_vector = (worldspawn.world_maxs - worldspawn.world_mins) / 2
+    end_point = Vector(origin_vector.x, origin_vector.y, height)
+
+    trace = GameTrace()
+    engine_trace.trace_ray(
+        Ray(origin_vector, end_point), ContentMasks.SOLID_BRUSH_ONLY, None, trace
+    )
+
+    find_height = height if trace.end_position.z > height else trace.end_position.z
+    return find_height
