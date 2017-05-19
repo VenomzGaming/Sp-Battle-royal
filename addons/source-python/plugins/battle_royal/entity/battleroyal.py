@@ -3,11 +3,14 @@
 import random
 
 from engines.server import global_vars
-from entities.entity import Entity
+from entities.entity import BaseEntity, Entity
+from filters.entities import BaseEntityIter, EntityIter
 from filters.players import PlayerIter
 from listeners.tick import Delay
-from messages import SayText2
 from mathlib import Vector
+from messages import SayText2
+from players.constants import LifeState
+
 
 from .player import BattleRoyalPlayer
 from .gas import Gas
@@ -84,10 +87,10 @@ class BattleRoyal:
     def add_dead_player(self, player):
         self._dead_players[player.userid] = player
 
-
-    def _god_mode(self, enable):
+    def _god_mode_noblock(self, enable):
         for br_player in self._players.values():
             br_player.godmode = enable
+            br_player.noblock = enable
 
     def spawn_item(self):
         # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
@@ -109,7 +112,8 @@ class BattleRoyal:
             SayText2('Any spawn point on this map.').send()
     
     def spawn_players(self):
-        pass
+        self._random_spawn(1)
+        # pass
         # spawn_type = _configs['spawn_player_type'].get_int()
         # if spawn_type == 0 or spawn_type == 1:
         #     self._random_spawn(spawn_type)     
@@ -118,31 +122,49 @@ class BattleRoyal:
         #         parachute.enable = True
         #     self._spawn_in_heli() 
 
+    def _respawn_all_player(self, locations, type_spawn):
+        for player in self._players.values():
+            # Add check if player is in group and spawn his mate near him
+            vector = random.choice(locations)
+            SayText2(str(vector)).send()
+
+            if type_spawn == 1:
+                player.origin = Vector(vector.x, vector.y, (globals.MAP_HEIGHT-200))
+            else:
+                player.origin = vector
+
+            player.player_state = 0
+            player.life_state = LifeState.ALIVE
+            player.health = 100
+            player.spawn()
+            locations.remove(vector) 
+
+            if type_spawn == 1:
+                parachute.open(player)
+
     def _spawn_in_heli(self):
         pass
 
     def _random_spawn(self, type_spawn):
+        # Check if mp_randomspawn is set to 1
+        locations = None
         if type_spawn == 1:
             globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
             locations = globals.players_spawn_manager.locations
 
-            if len(locations) != 0:
-                if not parachute.enable:
-                    parachute.enable = True
+            if not parachute.enable:
+                parachute.enable = True
 
-                for player in self._players.values():
-                    vector = random.choice(locations)
-                    player.origin = vector
-                    locations.remove(vector)            
-                    parachute.open(player)
-            else:
-                parachute.enable = False
-                self._random_spawn(0) 
+            if len(locations) == 0:
+                locations = [
+                    entity.get_key_value_vector('origin') for entity in BaseEntityIter('info_deathmatch_spawn')
+                ]
         else:
-            for player in self._players.values():
-                # Use deathmatch random spawn point
-                player.spawn()
+            locations = [
+                entity.get_key_value_vector('origin') for entity in BaseEntityIter('info_deathmatch_spawn')
+            ]
 
+            self._respawn_all_player(locations, type_spawn)
 
     def spread_gas(self):
         # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 mini)
@@ -154,21 +176,16 @@ class BattleRoyal:
         wave_one.spread(start)
 
     def warmup(self):
+        SayText2('Here').send()
         self.is_warmup = True
-        self._god_mode(True)
-        # from engines.precache import Model
-        # heli = Entity.create('prop_dynamic')
-        # location = Vector(637.66650390625, 322.892578125, 256.03125)
-        # heli.origin = location
-        # heli.model = Model('models/props_vehicles/helicopter_rescue.mdl')
-        # heli.solid_type = 6
-        # heli.spawn()
+        self._random_spawn(0)
+        self._god_mode_noblock(True)
 
     def start(self):
         SayText2('Match start !').send()
         self.is_warmup = False
         self.match_begin = True
-        self._god_mode(False)
+        self._god_mode_noblock(False)
 
         if bool(_configs['parachute_enable'].get_int()):
             parachute.enable = True

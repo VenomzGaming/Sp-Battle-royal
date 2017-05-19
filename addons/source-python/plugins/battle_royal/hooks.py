@@ -94,8 +94,9 @@ def _on_entity_delete(entity):
 
 @EntityPreHook(EntityCondition.is_player, '_spawn')
 def _on_spawn_players(stack):
-    pass
-    # return False
+    # pass
+    if not _battle_royal.is_warmup or not _battle_royal.match_begin:
+        return False
 
 @EntityPreHook(EntityCondition.is_player, 'buy_internal')
 def _on_buy(stack):

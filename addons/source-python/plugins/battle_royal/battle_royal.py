@@ -37,8 +37,8 @@ downloadables.add_directory('materials/models/parachute')
 
 
 def load():
-    pass
-
+    ConVar('mp_randomspawn').set_int(1)
+    
 
 def unload():
     pass

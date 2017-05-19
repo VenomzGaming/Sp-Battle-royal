@@ -12,6 +12,7 @@ from entities.helpers import edict_from_index
 from entities.hooks import EntityCondition
 from entities.hooks import EntityPreHook
 from events import Event
+from filters.entities import BaseEntityIter, EntityIter
 from filters.players import PlayerIter
 from listeners import OnLevelInit
 from listeners.tick import Delay
@@ -43,17 +44,10 @@ def _on_level_init(map_name):
 
 @Event('round_start')
 def _on_round_start(event_data):
-    SayText2('Round Start').send()
-    _battle_royal.is_warmup = True
-    for player in PlayerIter('alive'):
+    for player in PlayerIter('all'):
         br_player = BattleRoyalPlayer(player.index, 50)
         _battle_royal.add_player(br_player)
 
-        # Hide entierly the radar 
-        # hidehud = player.hidden_huds
-        # if hidehud & HIDEHUD_RADAR:
-        #     continue          
-        # player.hidden_huds = hidehud | HIDEHUD_RADAR
     _battle_royal.warmup()
     Delay(_configs['waiting_match_begin'].get_int(), _battle_royal.start)
 
@@ -64,7 +58,6 @@ def _on_round_end(event_data):
     for player in PlayerIter('alive'):
         for weapon in player.weapons():
             player.drop_weapon(weapon.pointer, None, None)
-    SayText2('Round End').send()
 
 
 @Event('player_spawn')
