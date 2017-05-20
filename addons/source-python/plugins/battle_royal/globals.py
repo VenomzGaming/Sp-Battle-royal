@@ -8,6 +8,7 @@ __all__ = (
     'items_spawn_manager',
     'players_spawn_manager',
     'air_drop_spawn_manager',
+    'parachute',
 )
 
 ## GLOBALS
@@ -31,3 +32,6 @@ players_spawn_manager = None
 
 # Players spawn manager
 air_drop_spawn_manager = None
+
+# Parachute
+parachute = None

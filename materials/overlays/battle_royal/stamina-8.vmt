@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "overlays/battle_royal/stamina-8"
+	"$translucent" 1
+}

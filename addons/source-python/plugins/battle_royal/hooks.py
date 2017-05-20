@@ -7,9 +7,9 @@ from engines.server import global_vars
 
 from entities import TakeDamageInfo
 from entities.entity import Entity
-from entities.constants import DamageTypes
+from entities.constants import DamageTypes, INVALID_ENTITY_INTHANDLE
 from entities.datamaps import InputData
-from entities.helpers import edict_from_pointer
+from entities.helpers import edict_from_pointer, index_from_inthandle
 from entities.hooks import EntityPreHook, EntityPostHook, EntityCondition
 
 from filters.players import PlayerIter
@@ -22,6 +22,8 @@ from memory.hooks import PreHook
 
 from messages import SayText2
 
+from players import UserCmd
+from players.constants import PlayerButtons
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
 
@@ -29,9 +31,15 @@ from weapons.entity import Weapon
 
 from .entity.battleroyal import _battle_royal
 from .entity.inventory import Inventory
+from .entity.sprint import SPRINT_START_SOUND, LOW_STAMINA_SOUND, SPRINTING_PLAYER_SPEED, DEFAULT_PLAYER_SPEED
+from .entity.stamina import StaminaCost
+
 from .globals import _authorize_weapon
+
 from .items.item import Item
+
 from .menus.backpack import backpack_menu
+
 from .utils.utils import BattleRoyalHud, set_proximity_listening
 
 ## MANAGE TEAM
@@ -69,6 +77,8 @@ def _on_tick():
             set_proximity_listening(player)
             player.set_property_bool("m_bSpotted", False)
             BattleRoyalHud.player_weight(player)
+            br_player = _battle_royal.get_player(player.userid)
+            br_player.stamina.restore()
     
 
 
@@ -78,14 +88,14 @@ def _on_entity_delete(entity):
     if item is None:
         return
 
-    if isinstance(item, Inventory):
-        SayText2(
-            'Entity {} Inventory of {} has been removed !'.format(entity.index, item.player.name)
-        ).send()
-    else:
-        SayText2(
-            'Entity {} Item {} has been removed !'.format(entity.index, item.name.title())
-        ).send()
+    # if isinstance(item, Inventory):
+    #     SayText2(
+    #         'Entity {} Inventory of {} has been removed !'.format(entity.index, item.player.name)
+    #     ).send()
+    # else:
+    #     SayText2(
+    #         'Entity {} Item {} has been removed !'.format(entity.index, item.name.title())
+    #     ).send()
 
     _battle_royal.remove_item_ent(entity)
 
@@ -94,9 +104,9 @@ def _on_entity_delete(entity):
 
 @EntityPreHook(EntityCondition.is_player, '_spawn')
 def _on_spawn_players(stack):
-    # pass
-    if not _battle_royal.is_warmup or not _battle_royal.match_begin:
-        return False
+    pass
+    # if not _battle_royal.is_warmup or not _battle_royal.match_begin:
+    #     return False
 
 @EntityPreHook(EntityCondition.is_player, 'buy_internal')
 def _on_buy(stack):
@@ -196,3 +206,43 @@ def _pre_damage_events(stack_data):
 
     # Add hit marker on hit (maybe color in function of hit armor or health)
     BattleRoyalHud.hitmarker(attacker)
+
+
+@EntityPreHook(EntityCondition.is_human_player, 'run_command')
+def pre_player_run_command(stack_data):
+    if not _battle_royal.match_begin:
+        return
+
+    userid = userid_from_pointer(stack_data[0])
+    player = _battle_royal.get_player(userid)
+
+    if player is None or player.dead:
+        return
+
+    usercmd = make_object(UserCmd, stack_data[1])
+
+    if usercmd.buttons & PlayerButtons.SPEED:
+        if player.sprint.key_pressed and player.sprint.sprinting:
+            if player.stamina.has_stamina_for(StaminaCost.SPRINT):
+                # Consume stamina
+                player.stamina.consume(StaminaCost.SPRINT)
+
+                # Cancel attacking
+                usercmd.buttons &= ~PlayerButtons.ATTACK
+                usercmd.buttons &= ~PlayerButtons.ATTACK2
+
+                # Step sound
+                player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
+                player.sprint.step()
+            else:
+                player.sprint.sprinting = False
+                player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)
+                LOW_STAMINA_SOUND.play(player.index)
+        elif not player.sprint.key_pressed and not player.sprint.sprinting:
+            player.sprint.sprinting = True
+            player.sprint.key_pressed = True
+            SPRINT_START_SOUND.play(player.sprint.player.index)
+    else:
+        player.sprint.key_pressed = False
+        player.sprint.sprinting = False
+        player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)

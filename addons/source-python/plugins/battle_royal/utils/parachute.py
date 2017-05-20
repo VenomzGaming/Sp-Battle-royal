@@ -4,16 +4,25 @@ from random import choice
 
 from core import echo_console
 from engines.precache import Model
+
 from entities.constants import MoveType
 from entities.entity import Entity
+
+from filters.entities import BaseEntityIter
 from filters.players import PlayerIter
+
 from listeners import OnTick
 from listeners.tick import Delay
+
 from mathlib import Vector
+
 from messages import SayText2
+
 from players.constants import PlayerStates, PlayerButtons
 from players.entity import Player
 
+
+from .. import globals
 from ..config import _configs
 
 
@@ -21,7 +30,7 @@ from ..config import _configs
 
 __all__ = (
     'Parachute',
-    'parachute',
+    # 'parachute',
 )
 
 class Parachute:
@@ -68,35 +77,39 @@ class Parachute:
 
 
 
-parachute = Parachute()
+globals.parachute = Parachute()
 
 ## TICK LISTENER
 
 @OnTick
 def _on_tick_listener():
     try:
-        if not parachute.enable:
+        if not globals.parachute.enable:
+            for player in PlayerIter('alive'):
+                if player.stuck: 
+                    for entity in BaseEntityIter('info_deathmatch_spawn'):
+                        vector = entity.get_key_value_vector('origin')
+                        break
+                    player.origin = vector
             return
 
         # Teleport existing parachutes to their owners
-        for player, entity_parachute in parachute.parachutes.values():
+        for player, entity_parachute in globals.parachute.parachutes.values():
             entity_parachute.teleport(player.origin, player.angles, None)
 
         for player in PlayerIter('alive'):
             velocity = player.fall_velocity 
 
             if (velocity < 1.0 or player.move_type & MoveType.LADDER or player.flags & PlayerStates.INWATER or player.buttons & PlayerButtons.JUMP):
-                if player.userid in parachute.parachutes:
-                    parachute.close(player)
+                if player.userid in globals.parachute.parachutes:
+                    globals.parachute.close(player)
                 continue
-
-            SayText2('Velocity : ' + str(velocity)).send()
 
             # Revert the falling velocity to slow down the player speed...
             player.base_velocity = Vector(0, 0, velocity + (_configs['parachute_falling_speed'].get_float() * -1))
 
-            if player.userid not in parachute.parachutes:
-                parachute.open(player)
+            if player.userid not in globals.parachute.parachutes:
+                globals.parachute.open(player)
     except Exception as e:
         echo_console(str(e))
 

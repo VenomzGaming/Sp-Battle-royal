@@ -9,8 +9,8 @@ from players.entity import Player
 
 
 from .inventory import Inventory
-# from .sprint import Sprint
-# from .stamina import Stamina
+from .sprint import Sprint
+from .stamina import Stamina
 
 ## ALL DECLARATIONS
 
@@ -27,8 +27,8 @@ class BattleRoyalPlayer(Player):
         self._total_weight = weight
         self._backpack = backpack
         self._group = None
-        # self._sprint = Sprint(self)
-        # self._stamina = Stamina(self)
+        self._sprint = Sprint(self)
+        self._stamina = Stamina(self)
         self._inventory = Inventory(self)
 
     def get_total_weight(self):
@@ -55,13 +55,13 @@ class BattleRoyalPlayer(Player):
 
     group = property(get_group, set_group)
 
-    # @property
-    # def sprint(self):
-    #     return self._sprint
+    @property
+    def sprint(self):
+        return self._sprint
 
-    # @property
-    # def stamina(self):
-    #     return self._stamina
+    @property
+    def stamina(self):
+        return self._stamina
 
     @property
     def inventory(self):

@@ -5,34 +5,48 @@ from engines.trace import ContentMasks
 from engines.trace import GameTrace
 from engines.trace import Ray
 from engines.trace import TraceFilterSimple
+
 from entities.constants import WORLD_ENTITY_INDEX
 from entities import TakeDamageInfo
 from entities.entity import Entity
 from entities.helpers import edict_from_index
 from entities.hooks import EntityCondition
 from entities.hooks import EntityPreHook
+
 from events import Event
+
 from filters.entities import BaseEntityIter, EntityIter
 from filters.players import PlayerIter
+
 from listeners import OnLevelInit
 from listeners.tick import Delay
+
 from mathlib import Vector
+
 from memory import make_object
+
 from messages import SayText2
+
 from players import UserCmd
 from players.entity import Player
 from players.helpers import index_from_userid, userid_from_pointer
 
+
 from . import globals
 from .config import _configs
+
 from .entity.battleroyal import _battle_royal
 from .entity.player import BattleRoyalPlayer
+from .entity.stamina import StaminaCost, FAIL_JUMP_FORCE
+
 from .items.item import Item
+
 from .utils.spawn_manager import SpawnManager
 from .utils.utils import BattleRoyalHud, set_proximity_listening, get_map_height
 
 
-# HIDEHUD_RADAR = 1 << 12
+
+## EVENTS
 
 @OnLevelInit
 def _on_level_init(map_name):
@@ -40,6 +54,40 @@ def _on_level_init(map_name):
     # globals.items_spawn_manager = SpawnManager('item', map_name)
     # globals.players_spawn_manager = SpawnManager('player', map_name)
     globals.MAP_HEIGHT = get_map_height()
+
+
+@Event('player_connect_full')
+def _on_player_connect(event_data):
+    if event_data['index'] == 0:
+        return
+
+    player = Player(event_data['index'])
+
+    br_player = BattleRoyalPlayer(player.index, 50)
+    if _battle_royal.match_begin:
+        _battle_royal.add_dead_player(br_player)
+    else:
+        # Spawn player
+        _battle_royal.add_player(br_player)
+        
+
+@Event('player_disconnect')
+def _on_player_disconnect(event_data):
+    player = Player(index_from_userid(event_data['userid']))
+    br_player = _battle_royal.get_player(player)
+
+    # Remove player from group
+    if hasattr(br_player, 'group') and br_player.group is not None:
+        group = br_player.group
+        br_player.group.remove_player(br_player)
+        br_player.group = None
+
+        if len(group.players) == 0 and group.name in _battle_royal.teams:
+            _battle_royal.remove_team(group)
+            del group
+
+    BattleRoyalHud.remove_player(player)
+    _battle_royal.remove_player(player)
 
 
 @Event('round_start')
@@ -65,7 +113,25 @@ def _on_player_spawn(event_data):
     if event_data['userid'] == 0:
         return
 
-    player = Player(index_from_userid(event_data['userid']))
+    try:
+        player = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
+        player.stamina.refill()
+    except:
+        pass
+
+
+@Event('player_jump')
+def on_player_jump(event_data):
+    player = _battle_royal.get_player(event_data['userid'])
+    
+    if player is None:
+        return
+
+    if player.stamina.has_stamina_for(StaminaCost.JUMP):
+        player.stamina.consume(StaminaCost.JUMP)
+    else:
+        player.stamina.player.push(1, FAIL_JUMP_FORCE, vert_override=True)
+        player.stamina.empty()
 
 
 @Event('player_death')
@@ -81,37 +147,3 @@ def _on_kill_events(event_data):
     _battle_royal.remove_player(victim)
     _battle_royal.add_dead_player(victim)
 
-
-@Event('player_connect_full')
-def _on_player_connect(event_data):
-    if event_data['index'] == 0:
-        return
-
-    player = Player(event_data['index'])
-
-    br_player = BattleRoyalPlayer(player.index, 50)
-    if _battle_royal.match_begin:
-        _battle_royal.add_dead_player(br_player)
-    else:
-        # Spawn player
-        _battle_royal.add_player(br_player)
-
-        
-
-@Event('player_disconnect')
-def _on_player_disconnect(event_data):
-    player = Player(index_from_userid(event_data['userid']))
-    br_player = _battle_royal.get_player(player)
-
-    # Remove player from group
-    if hasattr(br_player, 'group') and br_player.group is not None:
-        group = br_player.group
-        br_player.group.remove_player(br_player)
-        br_player.group = None
-
-        if len(group.players) == 0 and group.name in _battle_royal.teams:
-            _battle_royal.remove_team(group)
-            del group
-
-    BattleRoyalHud.remove_player(player)
-    _battle_royal.remove_player(player)

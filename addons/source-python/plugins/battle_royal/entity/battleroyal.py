@@ -2,23 +2,38 @@
 
 import random
 
+
+from cvars import ConVar
+
 from engines.server import global_vars
 from entities.entity import BaseEntity, Entity
+
 from filters.entities import BaseEntityIter, EntityIter
 from filters.players import PlayerIter
+
 from listeners.tick import Delay
+
 from mathlib import Vector
+
 from messages import SayText2
+
+from players.entity import Player
 from players.constants import LifeState
 
 
+import battle_royal.utils.parachute
+
 from .player import BattleRoyalPlayer
+
 from .gas import Gas
+
 from .. import globals
 from ..config import _configs
+
 from ..items.item import Item
+
 from ..utils.spawn_manager import SpawnManager
-from ..utils.parachute import parachute
+from ..utils.spawn_player import SpawnPlayer, SpawnType
 
 ## ALL DECLARATIONS
 
@@ -69,7 +84,10 @@ class BattleRoyal:
         return self._players   
 
     def get_player(self, player):
-        return self._players[player.userid] if player.userid in self._players else None
+        if isinstance(player, Player):
+            return self._players[player.userid] if player.userid in self._players else None
+        else:
+            return self._players[player] if player in self._players else None
 
     def add_player(self, player):
         self._players[player.userid] = player
@@ -111,60 +129,31 @@ class BattleRoyal:
         else:
             SayText2('Any spawn point on this map.').send()
     
-    def spawn_players(self):
-        self._random_spawn(1)
-        # pass
-        # spawn_type = _configs['spawn_player_type'].get_int()
-        # if spawn_type == 0 or spawn_type == 1:
-        #     self._random_spawn(spawn_type)     
-        # else:
-        #     if not parachute.enable:
-        #         parachute.enable = True
-        #     self._spawn_in_heli() 
-
-    def _respawn_all_player(self, locations, type_spawn):
-        for player in self._players.values():
-            # Add check if player is in group and spawn his mate near him
-            vector = random.choice(locations)
-            SayText2(str(vector)).send()
-
-            if type_spawn == 1:
-                player.origin = Vector(vector.x, vector.y, (globals.MAP_HEIGHT-200))
-            else:
-                player.origin = vector
-
-            player.player_state = 0
-            player.life_state = LifeState.ALIVE
-            player.health = 100
-            player.spawn()
-            locations.remove(vector) 
-
-            if type_spawn == 1:
-                parachute.open(player)
-
-    def _spawn_in_heli(self):
-        pass
-
-    def _random_spawn(self, type_spawn):
+    def spawn_players(self, **kwargs):
+        # Get possible location
         # Check if mp_randomspawn is set to 1
-        locations = None
-        if type_spawn == 1:
-            globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
-            locations = globals.players_spawn_manager.locations
+        if ConVar('mp_randomspawn').get_int() == 0:
+            SayText2('Changing mp_randomspawn to 1').send()
+            ConVar('mp_randomspawn').set_int(1)
+            return
 
-            if not parachute.enable:
-                parachute.enable = True
+        globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
+        all_locations = globals.players_spawn_manager.locations
 
-            if len(locations) == 0:
-                locations = [
-                    entity.get_key_value_vector('origin') for entity in BaseEntityIter('info_deathmatch_spawn')
-                ]
-        else:
-            locations = [
-                entity.get_key_value_vector('origin') for entity in BaseEntityIter('info_deathmatch_spawn')
+        # Maybe add check nb_player > len(loca) choose deathmatch spawn
+        if len(all_locations) == 0:
+            all_locations = [
+                entity.get_key_value_vector('origin') 
+                for entity in BaseEntityIter('info_deathmatch_spawn')
             ]
 
-            self._respawn_all_player(locations, type_spawn)
+        if len(kwargs) == 1 and 'spawn_type' in kwargs:
+            spawn_type = kwargs['spawn_type']
+        else:
+            spawn_type = _configs['spawn_player_type'].get_int()
+
+        spawn_player = SpawnPlayer(self._players, all_locations, spawn_type)
+        spawn_player.spawn()
 
     def spread_gas(self):
         # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 mini)
@@ -178,7 +167,7 @@ class BattleRoyal:
     def warmup(self):
         SayText2('Here').send()
         self.is_warmup = True
-        self._random_spawn(0)
+        self.spawn_players(spawn_type=0)
         self._god_mode_noblock(True)
 
     def start(self):
@@ -188,10 +177,10 @@ class BattleRoyal:
         self._god_mode_noblock(False)
 
         if bool(_configs['parachute_enable'].get_int()):
-            parachute.enable = True
-            Delay(_configs['parachute_duration'].get_int(), parachute.disable)
+            globals.parachute.enable = True
+            Delay(_configs['parachute_duration'].get_int(), globals.parachute.disable)
         else:
-            parachute.enable = False
+            globals.parachute.enable = False
 
         self.spawn_item()
         self.spawn_players()
@@ -202,7 +191,7 @@ class BattleRoyal:
     def end(self):
         self.match_begin = False
         self.is_warmup = False
-        parachute.enable = False
+        globals.parachute.enable = False
 
         # Remove all spawned entities
         Delay(1, self._remove_items)
