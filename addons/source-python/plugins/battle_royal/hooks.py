@@ -223,10 +223,23 @@ def pre_player_run_command(stack_data):
 
     if usercmd.buttons & PlayerButtons.SPEED:
         if player.sprint.key_pressed and player.sprint.sprinting:
-            if player.stamina.has_stamina_for(StaminaCost.SPRINT):
-                # Consume stamina
-                player.stamina.consume(StaminaCost.SPRINT)
+            if hasattr(player, 'stamina'):
+                if player.stamina.has_stamina_for(StaminaCost.SPRINT):
+                    # Consume stamina
+                    player.stamina.consume(StaminaCost.SPRINT)
 
+                    # Cancel attacking
+                    usercmd.buttons &= ~PlayerButtons.ATTACK
+                    usercmd.buttons &= ~PlayerButtons.ATTACK2
+
+                    # Step sound
+                    player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
+                    player.sprint.step()
+                else:
+                    player.sprint.sprinting = False
+                    player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)
+                    LOW_STAMINA_SOUND.play(player.index)
+            else:
                 # Cancel attacking
                 usercmd.buttons &= ~PlayerButtons.ATTACK
                 usercmd.buttons &= ~PlayerButtons.ATTACK2
@@ -234,10 +247,6 @@ def pre_player_run_command(stack_data):
                 # Step sound
                 player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
                 player.sprint.step()
-            else:
-                player.sprint.sprinting = False
-                player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)
-                LOW_STAMINA_SOUND.play(player.index)
         elif not player.sprint.key_pressed and not player.sprint.sprinting:
             player.sprint.sprinting = True
             player.sprint.key_pressed = True

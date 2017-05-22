@@ -21,7 +21,7 @@ from players.entity import Player
 from players.constants import LifeState
 
 
-import battle_royal.utils.parachute
+import battle_royal.entity.parachute
 
 from .player import BattleRoyalPlayer
 
@@ -111,7 +111,7 @@ class BattleRoyal:
             br_player.noblock = enable
 
     def spawn_item(self):
-        # Get all location of item in file maybe, random spawn item. Number of items depend on player and rarity of item add this attribute to item
+        # Number of items depend on player and rarity of item add this attribute to item
         globals.items_spawn_manager = SpawnManager('item', global_vars.map_name)
         locations = globals.items_spawn_manager.locations
         if len(locations) != 0:
@@ -141,7 +141,7 @@ class BattleRoyal:
         all_locations = globals.players_spawn_manager.locations
 
         # Maybe add check nb_player > len(loca) choose deathmatch spawn
-        if len(all_locations) == 0:
+        if len(all_locations) == 0 or len(all_locations) < len(self._players):
             all_locations = [
                 entity.get_key_value_vector('origin') 
                 for entity in BaseEntityIter('info_deathmatch_spawn')

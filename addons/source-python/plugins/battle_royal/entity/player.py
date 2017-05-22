@@ -11,6 +11,9 @@ from players.entity import Player
 from .inventory import Inventory
 from .sprint import Sprint
 from .stamina import Stamina
+from .score import Score
+
+from ..config import _configs
 
 ## ALL DECLARATIONS
 
@@ -27,8 +30,12 @@ class BattleRoyalPlayer(Player):
         self._total_weight = weight
         self._backpack = backpack
         self._group = None
+        self._score = Score(self)
+
+        if _configs['enable_stamina'].get_int():
+            self._stamina = Stamina(self)
+
         self._sprint = Sprint(self)
-        self._stamina = Stamina(self)
         self._inventory = Inventory(self)
 
     def get_total_weight(self):
@@ -62,6 +69,10 @@ class BattleRoyalPlayer(Player):
     @property
     def stamina(self):
         return self._stamina
+
+    @property
+    def br_score(self):
+        return self._score
 
     @property
     def inventory(self):

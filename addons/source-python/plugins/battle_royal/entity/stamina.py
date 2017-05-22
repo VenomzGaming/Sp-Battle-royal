@@ -3,6 +3,8 @@
 from colors import Color
 from messages import SayText2
 
+from ..config import _configs
+
 
 ## ALL DECLARATION
 
@@ -16,8 +18,8 @@ __all__ = (
 
 # Add config to enable or not Stamina
 
-INITIAL_STAMINA = 500 # Switch to config
-STAMINA_RESTORATION_RATE = 1
+INITIAL_STAMINA = _configs['stamina_amount'].get_int()
+STAMINA_RESTORATION_RATE = _configs['restoration_rate'].get_int()
 FAIL_JUMP_FORCE = -64
 
 OVERLAY_PATH = "overlays/battle_royal/stamina-{}"
@@ -26,13 +28,13 @@ OVERLAY_PATH = "overlays/battle_royal/stamina-{}"
 ## CLASS
 
 class StaminaCost:
-    SPRINT = 2
-    JUMP = 100
+    SPRINT = _configs['sprint_cost'].get_int()
+    JUMP = _configs['jump_cost'].get_int()
 
 
 class Stamina:
     def __init__(self, player):
-        self.player = player
+        self._player = player
         self.stamina = 0
         self.stamina_ratio = 0
 

@@ -73,3 +73,58 @@ with ConfigManager(info.name) as _config:
         description='Waiting time before another gas spreading after gas spread.'
     )
     
+    #
+    # Stamina config
+    #
+    _config.section('Stamina')
+
+    _configs['enable_stamina'] = _config.cvar(
+        'enable_stamina', 1,
+        description='1 - Enable | 0 - Disable stamina system.'
+    )
+
+    _configs['stamina_amount'] = _config.cvar(
+        'stamina_amount', 500,
+        description='Amount of stamina.'
+    )
+
+    _configs['restoration_rate'] = _config.cvar(
+        'restoration_rate', 1,
+        description='Amount of stamina restored per frame.'
+    )
+
+    _configs['sprint_cost'] = _config.cvar(
+        'sprint_cost', 2,
+        description='Stamina cost for a sprint.'
+    )
+
+    _configs['jump_cost'] = _config.cvar(
+        'jump_cost', 50,
+        description='Stamina cost for a jump.'
+    )
+
+
+    #
+    # Score config
+    #
+    _config.section('Score')
+
+    _configs['additional_score'] = _config.cvar(
+        'additional_score', 5,
+        description='How much increase additionnal score per player death.'
+    )
+
+    _configs['score_kill'] = _config.cvar(
+        'score_kill', 100,
+        description='Amount of points win when you kill an ennemy.'
+    )
+
+    _configs['score_headshot'] = _config.cvar(
+        'score_headshot', 50,
+        description='Amount of points win when you kill an ennemy with an headshot.'
+    )
+
+    _configs['score_assist'] = _config.cvar(
+        'score_assist', 50,
+        description='Amount of points win when you assist a kill.'
+    )

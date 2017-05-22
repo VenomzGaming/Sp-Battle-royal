@@ -38,6 +38,7 @@ from .config import _configs
 from .entity.battleroyal import _battle_royal
 from .entity.player import BattleRoyalPlayer
 from .entity.stamina import StaminaCost, FAIL_JUMP_FORCE
+from .entity.score import Score
 
 from .items.item import Item
 
@@ -73,8 +74,7 @@ def _on_player_connect(event_data):
 
 @Event('player_disconnect')
 def _on_player_disconnect(event_data):
-    player = Player(index_from_userid(event_data['userid']))
-    br_player = _battle_royal.get_player(player)
+    br_player = _battle_royal.get_player(event_data['userid'])
 
     # Remove player from group
     if hasattr(br_player, 'group') and br_player.group is not None:
@@ -114,8 +114,9 @@ def _on_player_spawn(event_data):
         return
 
     try:
-        player = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
-        player.stamina.refill()
+        player = _battle_royal.get_player(event_data['userid'])
+        if hasattr(player, 'stamina'):
+            player.stamina.refill()
     except:
         pass
 
@@ -127,23 +128,40 @@ def on_player_jump(event_data):
     if player is None:
         return
 
-    if player.stamina.has_stamina_for(StaminaCost.JUMP):
-        player.stamina.consume(StaminaCost.JUMP)
-    else:
-        player.stamina.player.push(1, FAIL_JUMP_FORCE, vert_override=True)
-        player.stamina.empty()
+    if hasattr(player, 'stamina'):
+        if player.stamina.has_stamina_for(StaminaCost.JUMP):
+            player.stamina.consume(StaminaCost.JUMP)
+        else:
+            player.stamina.player.push(1, FAIL_JUMP_FORCE, vert_override=True)
+            player.stamina.empty()
 
 
 @Event('player_death')
-def _on_kill_events(event_data):
+def _on_player_death(event_data):
+    attacker = None
     if event_data['attacker'] != 0:
-        attacker = _battle_royal.get_player(Player(index_from_userid(event_data['attacker'])))
+        attacker = _battle_royal.get_player(event_data['attacker'])
 
-    victim = _battle_royal.get_player(Player(index_from_userid(event_data['userid'])))
+    assister = None
+    if event_data['assister']:
+        assister = _battle_royal.get_player(event_data['assister'])
+
+    victim = _battle_royal.get_player(event_data['userid'])
     if victim is None:
         return
+
+    # Set score
+    if assister is not None:
+        assister.br_score.set_score(assist=True)
+
+    if attacker is not None:
+        attacker.br_score.set_score(headshot=event_data['headshot'])
+
 
     # Add player to dead
     _battle_royal.remove_player(victim)
     _battle_royal.add_dead_player(victim)
+
+    # Update additionnal score
+    Score.additional_score += _configs['additional_score'].get_int()
 
