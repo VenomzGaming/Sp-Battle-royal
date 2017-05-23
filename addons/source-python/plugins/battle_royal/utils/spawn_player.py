@@ -51,7 +51,7 @@ class SpawnPlayer:
             vector = random.choice(all_locations)
 
             if self._spawn_type == SpawnType.IN_SKY:
-                player.origin = Vector(vector.x, vector.y, (globals.MAP_HEIGHT-200))
+                player.origin = Vector(vector.x, vector.y, (globals.MAP_HEIGHT-150))
             else:
                 player.origin = vector
 

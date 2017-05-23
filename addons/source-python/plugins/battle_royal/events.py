@@ -46,10 +46,6 @@ from .utils.spawn_manager import SpawnManager
 from .utils.utils import BattleRoyalHud, set_proximity_listening, get_map_height
 
 
-## GLOBALS
-info_map_parameters = None
-
-
 ## EVENTS
 
 @OnLevelInit
@@ -66,12 +62,8 @@ def _on_player_connect(event_data):
         return
 
     player = Player(event_data['index'])
-
-    br_player = BattleRoyalPlayer(player.index, 50)
-    if _battle_royal.match_begin:
-        _battle_royal.add_dead_player(br_player)
-    else:
-        # Spawn player
+    if not _battle_royal.match_begin:
+        br_player = BattleRoyalPlayer(player.index, 50)
         _battle_royal.add_player(br_player)
         
 
@@ -104,11 +96,12 @@ def _on_player_disconnect(event_data):
 
 @Event('round_start')
 def _on_round_start(event_data):
-    # for player in PlayerIter('human'):
-    #     br_player = BattleRoyalPlayer(player.index, 50)
-    #     _battle_royal.add_player(br_player)
+    for player in PlayerIter('all'):
+        if _battle_royal.get_player(player) is None:
+            br_player = BattleRoyalPlayer(player.index, 50)
+            _battle_royal.add_player(br_player)
     
-    info_map_parameters = Entity.find_or_create("info_map_parameters")
+    globals.info_map_parameters = Entity.find_or_create("info_map_parameters")
 
     _battle_royal.warmup()
     Delay(_configs['waiting_match_begin'].get_int(), _battle_royal.start)
@@ -120,8 +113,8 @@ def _on_round_end(event_data):
     for player in PlayerIter('alive'):
         for weapon in player.weapons():
             player.drop_weapon(weapon.pointer, None, None)
-        player.primary = None
-        player.secondary = None
+        player.primary_weapon  = None
+        player.secondary_weapon = None
 
 
 @Event('player_spawn')
@@ -141,14 +134,14 @@ def _on_player_spawn(event_data):
 def on_player_jump(event_data):
     player = _battle_royal.get_player(event_data['userid'])
     
-    if player is None:
+    if player is None or not _battle_royal.match_begin:
         return
 
     if hasattr(player, 'stamina'):
         if player.stamina.has_stamina_for(StaminaCost.JUMP):
             player.stamina.consume(StaminaCost.JUMP)
         else:
-            player.stamina.player.push(1, FAIL_JUMP_FORCE, vert_override=True)
+            player.push(1, FAIL_JUMP_FORCE, vert_override=True)
             player.stamina.empty()
 
 

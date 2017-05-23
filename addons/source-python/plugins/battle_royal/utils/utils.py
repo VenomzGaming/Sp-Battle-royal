@@ -2,6 +2,8 @@
 
 import memory
 
+from cvars import ConVar
+
 from entities.entity import Entity
 from entities.constants import WORLD_ENTITY_INDEX
 
@@ -22,7 +24,7 @@ from players.voice import voice_server
 
 from listeners.tick import Delay
 
-from ..globals import info_map_parameters
+from .. import globals
 
 from ..entity.battleroyal import _battle_royal
 
@@ -91,25 +93,25 @@ class BattleRoyalHud:
 
     @classmethod
     def winner(cls):
-        if len(_battle_royal.teams) == 0:
-
+        duration = ConVar('mp_match_restart_delay').get_int()
+        msg = None
+        if len(_battle_royal.teams) != 0:
+            for player in _battle_royal.players.values():
+                msg = 'The winner group is {name} !'.format(name=player.group.name)
         else:
-
-        br_player = _battle_royal.get_player(player)
-        if br_player is None:
-            return
-
-        msg = 'Available weight {weight} Kg'.format(weight=br_player.total_weight)
+            for player in _battle_royal.players.values():
+                msg = 'The winner is {name} !'.format(name=player.name)
+                break
 
         HudMsg(
-            message=text,
-            hold_time=3,
+            message=msg,
+            hold_time=duration,
             x=-1,
             y=-0.7,
         ).send()
 
         # End match
-        Delay(3, info_map_parameters.fire_win_condition, (2,))
+        Delay(duration, globals.info_map_parameters.fire_win_condition, (2,))
 
     @classmethod
     def remove_player(cls, player):

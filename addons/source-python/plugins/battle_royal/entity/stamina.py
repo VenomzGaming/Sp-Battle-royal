@@ -68,5 +68,5 @@ class Stamina:
             return
 
         self.stamina_ratio = new_ratio
-        self.player.client_command('r_screenoverlay {}'.format(OVERLAY_PATH.format(new_ratio)))
+        self._player.client_command('r_screenoverlay {}'.format(OVERLAY_PATH.format(new_ratio)))
 

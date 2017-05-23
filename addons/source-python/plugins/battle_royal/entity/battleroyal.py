@@ -137,8 +137,8 @@ class BattleRoyal:
     
     def spawn_players(self, **kwargs):
         if ConVar('mp_randomspawn').get_int() == 0:
-            SayText2('Changing mp_randomspawn to 1').send()
             ConVar('mp_randomspawn').set_int(1)
+            # ConVar('mp_restartgame').set_int(1)
 
         globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
         all_locations = globals.players_spawn_manager.locations
@@ -202,6 +202,8 @@ class BattleRoyal:
         dead_players = self._dead_players.copy()
         self._players.update(dead_players) 
         self._dead_players.clear()
+        # self._players.clear()
+        # self._dead_players.clear()
 
     def _remove_items(self):
         all_entities = self._items_ents.copy()

@@ -206,48 +206,48 @@ def _pre_damage_events(stack_data):
     BattleRoyalHud.hitmarker(attacker)
 
 
-@EntityPreHook(EntityCondition.is_human_player, 'run_command')
-def pre_player_run_command(stack_data):
-    if not _battle_royal.match_begin:
-        return
+# @EntityPreHook(EntityCondition.is_human_player, 'run_command')
+# def pre_player_run_command(stack_data):
+#     if not _battle_royal.match_begin:
+#         return
 
-    userid = userid_from_pointer(stack_data[0])
-    player = _battle_royal.get_player(userid)
+#     userid = userid_from_pointer(stack_data[0])
+#     player = _battle_royal.get_player(userid)
 
-    if player is None or player.dead:
-        return
+#     if player is None or player.dead:
+#         return
 
-    usercmd = make_object(UserCmd, stack_data[1])
+#     usercmd = make_object(UserCmd, stack_data[1])
 
-    if (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.FORWARD) or
-       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.MOVELEFT) or
-       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.MOVERIGHT) or
-       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.LEFT) or
-       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.RIGHT):
+#     if usercmd.buttons & PlayerButtons.SPEED and (usercmd.buttons & PlayerButtons.FORWARD or
+#        usercmd.buttons & PlayerButtons.MOVELEFT or
+#        usercmd.buttons & PlayerButtons.MOVERIGHT or
+#        usercmd.buttons & PlayerButtons.LEFT or
+#        usercmd.buttons & PlayerButtons.RIGHT):
 
-        # Cancel attacking
-        usercmd.buttons &= ~PlayerButtons.ATTACK
-        usercmd.buttons &= ~PlayerButtons.ATTACK2
+#         # Cancel attacking
+#         usercmd.buttons &= ~PlayerButtons.ATTACK
+#         usercmd.buttons &= ~PlayerButtons.ATTACK2
 
-        if player.sprint.key_pressed and player.sprint.sprinting:
-            if hasattr(player, 'stamina'):
-                if player.stamina.has_stamina_for(StaminaCost.SPRINT):
-                    player.stamina.consume(StaminaCost.SPRINT)
+#         if player.sprint.key_pressed and player.sprint.sprinting:
+#             if hasattr(player, 'stamina'):
+#                 if player.stamina.has_stamina_for(StaminaCost.SPRINT):
+#                     player.stamina.consume(StaminaCost.SPRINT)
 
-                    player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
-                    player.sprint.step()
-                else:
-                    player.sprint.sprinting = False
-                    player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)
-                    LOW_STAMINA_SOUND.play(player.index)
-            else:
-                player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
-                player.sprint.step()
-        elif not player.sprint.key_pressed and not player.sprint.sprinting:
-            player.sprint.sprinting = True
-            player.sprint.key_pressed = True
-            SPRINT_START_SOUND.play(player.sprint.player.index)
-    else:
-        player.sprint.key_pressed = False
-        player.sprint.sprinting = False
-        player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)
+#                     player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
+#                     player.sprint.step()
+#                 else:
+#                     player.sprint.sprinting = False
+#                     player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)
+#                     LOW_STAMINA_SOUND.play(player.index)
+#             else:
+#                 player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
+#                 player.sprint.step()
+#         elif not player.sprint.key_pressed and not player.sprint.sprinting:
+#             player.sprint.sprinting = True
+#             player.sprint.key_pressed = True
+#             SPRINT_START_SOUND.play(player.sprint.player.index)
+#     else:
+#         player.sprint.key_pressed = False
+#         player.sprint.sprinting = False
+#         player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)

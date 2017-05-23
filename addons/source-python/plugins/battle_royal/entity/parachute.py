@@ -85,12 +85,6 @@ globals.parachute = Parachute()
 def _on_tick_listener():
     try:
         if not globals.parachute.enable:
-            for player in PlayerIter('alive'):
-                if player.stuck: 
-                    for entity in BaseEntityIter('info_deathmatch_spawn'):
-                        vector = entity.get_key_value_vector('origin')
-                        break
-                    player.origin = vector
             return
 
         # Teleport existing parachutes to their owners
@@ -107,6 +101,14 @@ def _on_tick_listener():
 
             # Revert the falling velocity to slow down the player speed...
             player.base_velocity = Vector(0, 0, velocity + (_configs['parachute_falling_speed'].get_float() * -1))
+
+            # Cause crash maybe
+            # if player.stuck: 
+            #     SayText2(str(player.name) + ' blocked').send()
+            #     for entity in BaseEntityIter('info_deathmatch_spawn'):
+            #         vector = entity.get_key_value_vector('origin')
+            #         break
+            #     player.origin = Vector(vector.x, vector.y, (globals.MAP_HEIGHT-150))
 
             if player.userid not in globals.parachute.parachutes:
                 globals.parachute.open(player)
