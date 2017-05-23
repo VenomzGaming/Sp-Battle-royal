@@ -46,12 +46,15 @@ from .utils.spawn_manager import SpawnManager
 from .utils.utils import BattleRoyalHud, set_proximity_listening, get_map_height
 
 
+## GLOBALS
+info_map_parameters = None
+
 
 ## EVENTS
 
 @OnLevelInit
 def _on_level_init(map_name):
-    #  Not sur about just load it on level init
+    #  Not sure about maybe just load it on level init
     # globals.items_spawn_manager = SpawnManager('item', map_name)
     # globals.players_spawn_manager = SpawnManager('player', map_name)
     globals.MAP_HEIGHT = get_map_height()
@@ -75,6 +78,11 @@ def _on_player_connect(event_data):
 @Event('player_disconnect')
 def _on_player_disconnect(event_data):
     br_player = _battle_royal.get_player(event_data['userid'])
+    if br_player is None:
+        br_player = _battle_royal.get_dead_player(event_data['userid'])
+
+    if br_player is None:
+        return
 
     # Remove player from group
     if hasattr(br_player, 'group') and br_player.group is not None:
@@ -86,15 +94,21 @@ def _on_player_disconnect(event_data):
             _battle_royal.remove_team(group)
             del group
 
-    BattleRoyalHud.remove_player(player)
-    _battle_royal.remove_player(player)
+    BattleRoyalHud.remove_player(br_player)
+
+    if br_player.dead:
+        _battle_royal.remove_dead_player(br_player)
+    else:
+        _battle_royal.remove_player(br_player)
 
 
 @Event('round_start')
 def _on_round_start(event_data):
-    for player in PlayerIter('all'):
-        br_player = BattleRoyalPlayer(player.index, 50)
-        _battle_royal.add_player(br_player)
+    # for player in PlayerIter('human'):
+    #     br_player = BattleRoyalPlayer(player.index, 50)
+    #     _battle_royal.add_player(br_player)
+    
+    info_map_parameters = Entity.find_or_create("info_map_parameters")
 
     _battle_royal.warmup()
     Delay(_configs['waiting_match_begin'].get_int(), _battle_royal.start)
@@ -106,6 +120,8 @@ def _on_round_end(event_data):
     for player in PlayerIter('alive'):
         for weapon in player.weapons():
             player.drop_weapon(weapon.pointer, None, None)
+        player.primary = None
+        player.secondary = None
 
 
 @Event('player_spawn')
@@ -165,3 +181,20 @@ def _on_player_death(event_data):
     # Update additionnal score
     Score.additional_score += _configs['additional_score'].get_int()
 
+    # Ending match
+    end = False
+    if len(_battle_royal.teams) != 0:
+        last_team = []
+        for player in _battle_royal.players:
+            if player.group not in last_team:
+                last_team.append(player.group)
+
+        if len(last_team) == 1:
+            end = True
+    else:
+        if len(_battle_royal.players) == 1:
+            end = True
+
+    if end:
+        # Check if round_end is fired
+        BattleRoyalHud.winner()

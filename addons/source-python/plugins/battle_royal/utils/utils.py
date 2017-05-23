@@ -3,20 +3,29 @@
 import memory
 
 from entities.entity import Entity
+from entities.constants import WORLD_ENTITY_INDEX
+
 from engines.trace import engine_trace
 from engines.trace import ContentMasks
 from engines.trace import GameTrace
 from engines.trace import Ray
 from engines.trace import TraceFilterSimple
-from entities.constants import WORLD_ENTITY_INDEX
+
 from filters.players import PlayerIter
+
 from messages import HudMsg, SayText2
+
 from mathlib import Vector
+
 from players.entity import Player
 from players.voice import voice_server
+
 from listeners.tick import Delay
 
+from ..globals import info_map_parameters
+
 from ..entity.battleroyal import _battle_royal
+
 from ..config import _configs
 
 
@@ -81,8 +90,31 @@ class BattleRoyalHud:
         ).send()
 
     @classmethod
+    def winner(cls):
+        if len(_battle_royal.teams) == 0:
+
+        else:
+
+        br_player = _battle_royal.get_player(player)
+        if br_player is None:
+            return
+
+        msg = 'Available weight {weight} Kg'.format(weight=br_player.total_weight)
+
+        HudMsg(
+            message=text,
+            hold_time=3,
+            x=-1,
+            y=-0.7,
+        ).send()
+
+        # End match
+        Delay(3, info_map_parameters.fire_win_condition, (2,))
+
+    @classmethod
     def remove_player(cls, player):
-        del cls._player_hud[player.userid]
+        if player.userid in cls._player_hud:
+            del cls._player_hud[player.userid]
 
     @staticmethod
     def hitmarker(player):

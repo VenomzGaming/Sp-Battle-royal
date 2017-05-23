@@ -79,7 +79,6 @@ def _on_tick():
             BattleRoyalHud.player_weight(player)
             br_player = _battle_royal.get_player(player.userid)
             br_player.stamina.restore()
-    
 
 
 @OnEntityDeleted
@@ -195,12 +194,11 @@ def _pre_damage_events(stack_data):
         SayText2('In your group !').send()
         return
 
-    # Maybe add destroy armor before damaging player if sht is in head or body
+    # Maybe add destroy armor before damaging player if hitgroup is head or body
     # if victim.armor > 0:
     #     take_damage_info.damage = victim.armor - take_damage_info.damage
     
     if victim.health - take_damage_info.damage <= 0:
-        # Drop player backpack to be taken by another player
         entity = victim.drop_inventory()
         _battle_royal.add_item_ent(entity, victim.inventory)
 
@@ -221,18 +219,21 @@ def pre_player_run_command(stack_data):
 
     usercmd = make_object(UserCmd, stack_data[1])
 
-    if usercmd.buttons & PlayerButtons.SPEED:
+    if (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.FORWARD) or
+       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.MOVELEFT) or
+       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.MOVERIGHT) or
+       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.LEFT) or
+       (usercmd.buttons & PlayerButtons.SPEED and usercmd.buttons & PlayerButtons.RIGHT):
+
+        # Cancel attacking
+        usercmd.buttons &= ~PlayerButtons.ATTACK
+        usercmd.buttons &= ~PlayerButtons.ATTACK2
+
         if player.sprint.key_pressed and player.sprint.sprinting:
             if hasattr(player, 'stamina'):
                 if player.stamina.has_stamina_for(StaminaCost.SPRINT):
-                    # Consume stamina
                     player.stamina.consume(StaminaCost.SPRINT)
 
-                    # Cancel attacking
-                    usercmd.buttons &= ~PlayerButtons.ATTACK
-                    usercmd.buttons &= ~PlayerButtons.ATTACK2
-
-                    # Step sound
                     player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
                     player.sprint.step()
                 else:
@@ -240,11 +241,6 @@ def pre_player_run_command(stack_data):
                     player.sprint.ensure_speed(DEFAULT_PLAYER_SPEED)
                     LOW_STAMINA_SOUND.play(player.index)
             else:
-                # Cancel attacking
-                usercmd.buttons &= ~PlayerButtons.ATTACK
-                usercmd.buttons &= ~PlayerButtons.ATTACK2
-
-                # Step sound
                 player.sprint.ensure_speed(SPRINTING_PLAYER_SPEED)
                 player.sprint.step()
         elif not player.sprint.key_pressed and not player.sprint.sprinting:

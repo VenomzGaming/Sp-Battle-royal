@@ -9,6 +9,7 @@ __all__ = (
     'players_spawn_manager',
     'air_drop_spawn_manager',
     'parachute',
+    'info_map_parameters',
 )
 
 ## GLOBALS
@@ -35,3 +36,6 @@ air_drop_spawn_manager = None
 
 # Parachute
 parachute = None
+
+# Info map parameters
+info_map_parameters = None

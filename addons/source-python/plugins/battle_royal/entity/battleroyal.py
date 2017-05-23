@@ -100,10 +100,16 @@ class BattleRoyal:
         return self._dead_players   
 
     def get_dead_player(self, player):
-        return self._dead_players[player.userid] if player.userid in self.deads else None
+        if isinstance(player, Player):
+            return self._dead_players[player.userid] if player.userid in self._dead_players else None
+        else:
+            return self._dead_players[player] if player in self._dead_players else None
 
     def add_dead_player(self, player):
         self._dead_players[player.userid] = player
+
+    def remove_dead_player(self, player):
+        del self._dead_players[player.userid]
 
     def _god_mode_noblock(self, enable):
         for br_player in self._players.values():
@@ -130,12 +136,9 @@ class BattleRoyal:
             SayText2('Any spawn point on this map.').send()
     
     def spawn_players(self, **kwargs):
-        # Get possible location
-        # Check if mp_randomspawn is set to 1
         if ConVar('mp_randomspawn').get_int() == 0:
             SayText2('Changing mp_randomspawn to 1').send()
             ConVar('mp_randomspawn').set_int(1)
-            return
 
         globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
         all_locations = globals.players_spawn_manager.locations
@@ -143,7 +146,7 @@ class BattleRoyal:
         # Maybe add check nb_player > len(loca) choose deathmatch spawn
         if len(all_locations) == 0 or len(all_locations) < len(self._players):
             all_locations = [
-                entity.get_key_value_vector('origin') 
+                entity.get_key_value_vector('origin')
                 for entity in BaseEntityIter('info_deathmatch_spawn')
             ]
 
@@ -165,7 +168,6 @@ class BattleRoyal:
         wave_one.spread(start)
 
     def warmup(self):
-        SayText2('Here').send()
         self.is_warmup = True
         self.spawn_players(spawn_type=0)
         self._god_mode_noblock(True)
@@ -197,8 +199,8 @@ class BattleRoyal:
         Delay(1, self._remove_items)
 
         # Clear dict and list
-        self._players.clear()
-        self._teams.clear()
+        dead_players = self._dead_players.copy()
+        self._players.update(dead_players) 
         self._dead_players.clear()
 
     def _remove_items(self):

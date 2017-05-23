@@ -33,7 +33,6 @@ def _backpack_menu_build(menu, index):
         menu.append(Text('Empty Backpack'))
         entity = _battle_royal.get_item_ent(menu.entity)
         entity.remove()
-        # _battle_royal.remove_item_ent(entity)
 
     menu.append(Text(' '))
     menu.append(SimpleOption(9, 'Close', highlight=True))
