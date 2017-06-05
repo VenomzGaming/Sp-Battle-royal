@@ -5,6 +5,7 @@
 
 __all__ = (
     '_authorize_weapon',
+    '_weapon_name',
     'items_spawn_manager',
     'players_spawn_manager',
     'air_drop_spawn_manager',

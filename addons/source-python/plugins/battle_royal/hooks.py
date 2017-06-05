@@ -5,11 +5,11 @@ from commands.client import ClientCommand
 
 from engines.server import global_vars
 
-from entities import TakeDamageInfo
+from entities import TakeDamageInfo, CheckTransmitInfo
 from entities.entity import Entity
 from entities.constants import DamageTypes, INVALID_ENTITY_INTHANDLE
 from entities.datamaps import InputData
-from entities.helpers import edict_from_pointer, index_from_inthandle
+from entities.helpers import edict_from_pointer, index_from_inthandle, index_from_pointer
 from entities.hooks import EntityPreHook, EntityPostHook, EntityCondition
 
 from filters.players import PlayerIter
@@ -25,7 +25,8 @@ from messages import SayText2
 from players import UserCmd
 from players.constants import PlayerButtons
 from players.entity import Player
-from players.helpers import index_from_userid, userid_from_index, userid_from_pointer
+from players.helpers import index_from_userid, userid_from_index, userid_from_pointer, userid_from_edict
+
 
 from weapons.entity import Weapon
 
@@ -36,7 +37,7 @@ from .entity.stamina import StaminaCost
 
 from .globals import _authorize_weapon
 
-from .items.item import Item
+from .items.item import Item, items
 
 from .menus.backpack import backpack_menu
 
@@ -46,6 +47,7 @@ from .utils.utils import BattleRoyalHud, set_proximity_listening
 
 @ClientCommand('joingame')
 def _on_join_game(command, index):
+    'Force join team'
     player = Player(index)
     team_t = len(PlayerIter('t'))
     team_ct = len(PlayerIter('ct'))
@@ -59,6 +61,7 @@ def _on_join_game(command, index):
 
 @ClientCommand('jointeam')
 def _on_join_team(command, index):
+    'Block join team command'
     return CommandReturn.BLOCK
 
 
@@ -81,22 +84,22 @@ def _on_tick():
             br_player.stamina.restore()
 
 
-@OnEntityDeleted
-def _on_entity_delete(entity):
-    item = _battle_royal.get_item_ent(entity)
-    if item is None:
-        return
+# @OnEntityDeleted
+# def _on_entity_delete(entity):
+#     item = _battle_royal.get_item_ent(entity)
+#     if item is None:
+#         return
 
-    # if isinstance(item, Inventory):
-    #     SayText2(
-    #         'Entity {} Inventory of {} has been removed !'.format(entity.index, item.player.name)
-    #     ).send()
-    # else:
-    #     SayText2(
-    #         'Entity {} Item {} has been removed !'.format(entity.index, item.name.title())
-    #     ).send()
+#     # if isinstance(item, Inventory):
+#     #     SayText2(
+#     #         'Entity {} Inventory of {} has been removed !'.format(entity.index, item.player.name)
+#     #     ).send()
+#     # else:
+#     #     SayText2(
+#     #         'Entity {} Item {} has been removed !'.format(entity.index, item.name.title())
+#     #     ).send()
 
-    _battle_royal.remove_item_ent(entity)
+#     _battle_royal.remove_item_ent(entity)
 
 
 # MANAGE HOOK
@@ -107,12 +110,16 @@ def _on_spawn_players(stack):
     # if not _battle_royal.is_warmup or not _battle_royal.match_begin:
     #     return False
 
+
 @EntityPreHook(EntityCondition.is_player, 'buy_internal')
 def _on_buy(stack):
+    'Block buy command.'
     return False
+
 
 @EntityPreHook(EntityCondition.is_player, 'bump_weapon')
 def _on_weapon_bump(stack):
+    'Override default bump_weapon to used only <use> input to pick weapon.'
     player = make_object(Player, stack[0])
     weapon = make_object(Entity, stack[1])
     if weapon.index not in _authorize_weapon:
@@ -123,59 +130,73 @@ def _on_weapon_bump(stack):
 
 @EntityPreHook(EntityCondition.is_player, 'drop_weapon')
 def _on_weapon_drop(stack):
+    'Manage dropped weapon from invenentory.'
     player = make_object(Player, stack[0])
     br_player = _battle_royal.get_player(player)
+
     try:
         entity = make_object(Entity, stack[1])
     except ValueError:
         return
-    weapon_name = str(entity.classname).split('_')[1]
-    if weapon_name == 'healthshot':
-        item = Item.get_subclass_dict()[weapon_name.title()]()
-        br_player.inventory.remove(item, 1)
-        _battle_royal.add_player(br_player)
-    else:
+
+    if entity.classname != 'weapon_healthshot':
         return False
+
+    item = items.find_by_index(entity.index)
+    if item:
+        item.on_dropped(br_player)
 
 
 @EntityPreHook(EntityCondition.equals_entity_classname('prop_physics_override'), 'use')
 @EntityPreHook(lambda entity: entity.classname.startswith('weapon_'), 'use')
 def _on_pick_up_item(stack):
+    'Add items to the inventory which have a <use> input.'
     entity = make_object(Entity, stack[0])
     input_data = make_object(InputData, stack[1])
     player = make_object(Player, input_data.activator)
+    item = items.find_by_index(entity.index)
 
-    if player is None or _battle_royal.match_begin != True or entity.index not in _battle_royal.items_ents:
+    if player is None or _battle_royal.match_begin != True or item is None:
         return
 
     br_player = _battle_royal.get_player(player)
-    item = _battle_royal.get_item_ent(entity)
     
     if isinstance(item, Inventory):
         backpack_menu.entity = entity
         backpack_menu.backpack = item
         backpack_menu.send(player.index)
     else:
-        SayText2('1 ' + str(br_player.total_weight)).send()
-        success = br_player.pick_up(item)
-        if success:
-            SayText2('3 ' + str(br_player.total_weight)).send()
-            entity.remove()
-
-            if item.item_type == 'weapon':
-                # Second param is used to set weapon ammo
-                br_player.equip(item, True)
-            elif item.item_type in ['ammo', 'armor', 'backpack']:
-                br_player.equip(item)
-
-            SayText2('4 ' + str(br_player.total_weight)).send()
-            _battle_royal.add_player(br_player)
-            SayText2('5 ' + str(br_player.total_weight)).send()
+        if item.on_pickup(br_player):
             SayText2(br_player.name + ' take item ' + item.name).send()
+        else:
+            SayText2(br_player.name + ' can\'t take item ' + item.name).send()
+
+
+# @EntityPreHook(EntityCondition.equals_entity_classname('prop_physics_override'), 'set_transmit')
+# @EntityPreHook(lambda entity: entity.classname.startswith('weapon_'), 'set_transmit')
+# def _set_transmit(stack):
+#     info = memory.make_object(CheckTransmitInfo, stack[1])
+#     userid = userid_from_edict(info.client)
+#     entity_index = index_from_pointer(stack[0])
+#     item = items.find_by_index(entity_index)
+#     if item is None and item.entity is None:
+#         return
+
+#     br_player = _battle_royal.get_player(userid)
+#     if br_player is None:
+#         return
+
+#     if br_player.origin.get_distance(item.entity.origin) <= 50:
+#         # Orage color
+#         orange = 255*65536+165*256+0
+#         item.entity.set_property_bool('m_bShouldGlow', True)
+#         item.entity.set_property_int('m_clrGlow', orange)
+#         item.entity.set_property_float('m_flGlowMaxDist', 50) 
 
 
 @EntityPreHook(EntityCondition.is_player, 'on_take_damage')
 def _pre_damage_events(stack_data):
+    'Avoid damaging group member and override damage system.'
     take_damage_info = make_object(TakeDamageInfo, stack_data[1])
 
     if not take_damage_info.attacker:

@@ -1,5 +1,6 @@
 ## IMPORTS
 
+from engines.precache import Model
 from listeners.tick import Delay, Repeat, RepeatStatus
 from messages import SayText2
 
@@ -9,24 +10,21 @@ from .care import Care
 class Gauze(Care):
     name = 'Gauze'
     health = 10
-    weight = 1
-    models = 'models/props/de_inferno/hr_i/concrete_bag_a/concrete_bag_a.mdl'
-    # models = 'models/battle_royal/items/medkit_small.mdl'
+    weight = 0.1
+    model = Model('models/props/de_inferno/hr_i/concrete_bag_a/concrete_bag_a.mdl')
 
-    def _repeat(self):
-        add_health = self.health // 5
-        if self._player.health + add_health > 100:
-            self._player.health = 100
-            self._repeater.stop()
-            return
 
-        self._player.health += add_health
-
-    def use(self, player):
+    def on_use(self, player):
+        'Called upon the item being used.'
         self._player = player
+
+        if not self.can_be_used():
+            return False
+
         self._repeater = Repeat(self._repeat)
         self._repeater.start(0.5)
         Delay(3, self._repeater.stop)
-        # Add config for tick repeat heal ?
+        player.inventory.discard(self, 1)
         SayText2('Use care').send()
+        
         return True

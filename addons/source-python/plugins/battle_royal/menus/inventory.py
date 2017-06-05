@@ -23,9 +23,9 @@ def _inventory_menu_build(menu, index):
         return
         
     menu.append(Text('Inventory'))
-    if len(br_player.inventory.items.values()) != 0:
+    if len(br_player.inventory) != 0:
         i = 1
-        for item in br_player.inventory.items.values():
+        for item in br_player.inventory:
             menu.append(SimpleOption(i, item.name + ' (x'+str(item.amount)+')', (item_menu, item)))
             i += 1
     else:

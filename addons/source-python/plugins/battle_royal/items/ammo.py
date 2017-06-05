@@ -1,34 +1,52 @@
 ## IMPORTS
 
+from engines.precache import Model
 from messages import SayText2
-from weapons.manager import weapon_manager
 
-from .item import Item
+from .item import Item, items
+
 
 class Ammo(Item):
+    name = 'Ammo (10 Primary Bullets)'
     item_type = 'ammo'
-    clip = 0
+    weapon = ''
     ammo = 10
-    slot = ''
-    tag = ''
-    models = 'models/props/coop_cementplant/coop_ammo_stash/coop_ammo_stash_full.mdl'
+    weight = 0.0
+    model = Model('models/props/coop_cementplant/coop_ammo_stash/coop_ammo_stash_full.mdl')
 
-    def equip(self, player):
-        weapon = player.get_weapon(is_filters=self.slot)
-        if weapon is not None and self.tag in weapon_manager[weapon.classname].tags:
-            can_used = self.use(player)
-            
-            if can_used:
-                player.inventory.remove(self)
+    def can_be_used(self, player):
+        'Check if item can be used.'
+        weapon = player.get_weapon(self.weapon)
+        return bool(weapon is not None)
 
-    def use(self, player):
-        weapon = player.get_weapon(is_filters=self.slot)
-        if weapon is not None and self.tag in weapon_manager[weapon.classname].tags:
-            if self.clip != 0:
-                weapon.clip += self.clip
-            weapon.ammo += self.ammo
-            SayText2('Add Ammo to ' + weapon.classname).send()
-            return True
-        else:       
-            SayText2('Can\'t use').send()
+    def on_pickup(self, player):
+        'Upon the item being picked up.'
+        if not player.inventory.add(self):
             return False
+
+        if self.can_be_used(player):
+            self.on_use(player)
+
+        self.on_remove()
+        return True
+
+    def on_remove(self):
+        'Called upon the wanted removal of the entity.'
+        if self.entity is None:
+            return
+
+        if self in items:
+            items.remove(self)
+        self.entity.remove()
+
+    def on_use(self, player):
+        'Called upon the item being used.'
+        if not self.can_be_used(player):
+            return False
+
+        weapon = player.get_weapon(self.weapon)
+        weapon.ammo += self.ammo
+
+        player.inventory.discard(self)
+        return True
+

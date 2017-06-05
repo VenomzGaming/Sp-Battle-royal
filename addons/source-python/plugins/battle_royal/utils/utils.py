@@ -41,14 +41,13 @@ __all__ = (
 
 class BattleRoyalHud:
 
-    # _timer_match_begin = _configs['waiting_match_begin'].get_int()
     warmup_hud = None
     match_hud = None
     _player_hud = dict()
 
     @classmethod
     def warmup(cls):
-        # text = 'Match started in {}'.format(cls._timer_match_begin) 
+        'Show warmup message.'
         text = 'Are you prepared ?!'
 
         cls.match_hud = HudMsg(
@@ -57,10 +56,10 @@ class BattleRoyalHud:
             x=-1,
             y=-0.7,
         ).send()
-        # cls._timer_match_begin -= 1
 
     @classmethod
     def match_info(cls):
+        'Show remaining player.'
         alive_player = len(_battle_royal.players)
         last_teams = len(_battle_royal.teams)
 
@@ -77,11 +76,12 @@ class BattleRoyalHud:
 
     @classmethod
     def player_weight(cls, player):
+        'Show player available space.'
         br_player = _battle_royal.get_player(player)
         if br_player is None:
             return
 
-        msg = 'Available weight {weight} Kg'.format(weight=br_player.total_weight)
+        msg = 'Available weight {weight} Kg'.format(weight=br_player.inventory.space)
 
         cls._player_hud[br_player.userid] = HudMsg(
             message=msg,
@@ -93,6 +93,7 @@ class BattleRoyalHud:
 
     @classmethod
     def winner(cls):
+        'Show winner of the match'
         duration = ConVar('mp_match_restart_delay').get_int()
         msg = None
         if len(_battle_royal.teams) != 0:
@@ -115,11 +116,13 @@ class BattleRoyalHud:
 
     @classmethod
     def remove_player(cls, player):
+        'Remove all player hud.'
         if player.userid in cls._player_hud:
             del cls._player_hud[player.userid]
 
     @staticmethod
     def hitmarker(player):
+        'Show hitmarker.'
         if player.steamid == 'BOT':
             return
             
@@ -132,6 +135,7 @@ class BattleRoyalHud:
 ## VOICE PROXIMITY
 
 def set_proximity_listening(player):
+    'Manage the proximity voice chat.'
     for other_player in PlayerIter('alive'):
         if other_player.origin.get_distance(player.origin) <= _configs['voice_proximity'].get_int():
             voice_server.set_client_listening(player.index, other_player.index, True)
@@ -141,6 +145,7 @@ def set_proximity_listening(player):
 ## MAP
 
 def get_map_height():
+    'Get the height of the current map.'
     worldspawn = Entity(WORLD_ENTITY_INDEX)
     height = worldspawn.world_mins.z + worldspawn.world_maxs.z
     origin_vector = (worldspawn.world_maxs - worldspawn.world_mins) / 2

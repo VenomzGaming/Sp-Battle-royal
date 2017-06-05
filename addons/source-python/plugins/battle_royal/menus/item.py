@@ -41,16 +41,7 @@ def _item_remove_menu_select(menu, index, choice):
 
     item = menu.item
     amount = choice.value
-    br_player.inventory.remove(item, amount)
-    if amount is not None:
-        item.amount = amount
-
-    _battle_royal.add_player(br_player)
-
-    # Re-create item
-    location = br_player.origin
-    entity = item.create(Vector(location.x+40, location.y, location.z))
-    _battle_royal.add_item_ent(entity, item)
+    br_player.drop(item, amount)
 
     return menu.previous_menu
 
@@ -69,8 +60,11 @@ def _item_menu_build(menu, index):
     menu.append(Text(menu.item.description))
     menu.append(Text(str(menu.item.weight) + ' Kg'))
     menu.append(Text(' '))
-    menu.append(SimpleOption(1, 'Use', (None, menu.item)))
-    menu.append(SimpleOption(2, 'Drop', (item_remove_menu, menu.item)))
+    menu.append(SimpleOption(1, 'Use', ('use', menu.item)))
+    if menu.item.amount == 1:
+        menu.append(SimpleOption(2, 'Drop', ('drop', menu.item)))
+    else:
+        menu.append(SimpleOption(2, 'Drop', (item_remove_menu, menu.item)))
     menu.append(Text(' '))
     menu.append(SimpleOption(7, 'Back', (menu.previous_menu, None), highlight=True))
     menu.append(SimpleOption(9, 'Close', highlight=True))
@@ -79,17 +73,18 @@ def _item_menu_build(menu, index):
 
 def _item_menu_select(menu, index, choice):
     br_player = _battle_royal.get_player(Player(index))
-    menu_to_open, item = choice.value
+    action, item = choice.value
 
-    if menu_to_open is not None:
+    if action == 'use':
+        br_player.use(item)
+    elif action == 'drop':
+        br_player.drop(item)
+    elif action is not None:
         if item is not None:
-            menu_to_open.previous_menu = menu.previous_menu
-            menu_to_open.item = item
-        return menu_to_open
+            action.previous_menu = menu.previous_menu
+            action.item = item
+        return action
 
-    br_player.use(item)
-    # param.use(br_player)
-    
     return menu.previous_menu
 
 item_menu = SimpleMenu(

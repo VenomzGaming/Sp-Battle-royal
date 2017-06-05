@@ -1,19 +1,19 @@
 ## IMPORTS
 
-# from entities.entity import Entity
-from weapons.entity import Weapon
-from entities.helpers import index_from_pointer
-from listeners.tick import Delay
-from messages import SayText2
-
-from .weapon import WeaponItem
-# from .globals import _authorize_weapon
+from .weapon import Weapon
 
 
-class AK47(WeaponItem):
-    name = 'AK47'
+class Ak47(Weapon):
+    name = 'Ak47'
+    classname = 'weapon_ak47'
     item_type = 'weapon'
     slot = 'primary'
     clip = 30
     ammo = 0
-    weight = 20
+    weight = 10.0
+
+    def __init__(self, entity, *args, **kwargs):
+        'Setting the ammo and clip count of the weapon on pickup.'
+        super().__init__(entity, *args, **kwargs)
+        self.ammo = 0
+        self.clip = 30

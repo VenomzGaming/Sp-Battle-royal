@@ -30,7 +30,7 @@ from .gas import Gas
 from .. import globals
 from ..config import _configs
 
-from ..items.item import Item
+from ..items.item import Item, items
 
 from ..utils.spawn_manager import SpawnManager
 from ..utils.spawn_player import SpawnPlayer, SpawnType
@@ -48,7 +48,6 @@ class BattleRoyal:
     def __init__(self):
         self.is_warmup = False
         self.match_begin = False
-        self._items_ents = dict()
         self._players = dict()
         self._dead_players = dict()
         self._teams = dict()
@@ -65,19 +64,6 @@ class BattleRoyal:
 
     def remove_team(self, team):
         del self._teams[team.name] 
-
-    @property
-    def items_ents(self):
-        return self._items_ents   
-
-    def get_item_ent(self, entity):
-        return self._items_ents[entity.index] if entity.index in self._items_ents else None
-
-    def add_item_ent(self, entity, item):
-        self._items_ents[entity.index] = item
-
-    def remove_item_ent(self, entity):
-        del self._items_ents[entity.index]
 
     @property
     def players(self):
@@ -124,21 +110,19 @@ class BattleRoyal:
             for classname, cls in Item.get_subclass_dict().items():
                 if len(locations) == 0:
                     break
-                if classname in ['WeaponItem', 'Ammo', 'Armor', 'Care']:
+                if classname in ['Weapon', 'Ammo', 'Armor', 'Care']:
                     continue
 
-                item = cls()
                 vector = random.choice(locations)
-                entity = item.create(vector)
+                item = cls.create(vector)
                 locations.remove(vector)
-                _battle_royal.add_item_ent(entity, item)
         else:
             SayText2('Any spawn point on this map.').send()
     
     def spawn_players(self, **kwargs):
         if ConVar('mp_randomspawn').get_int() == 0:
             ConVar('mp_randomspawn').set_int(1)
-            # ConVar('mp_restartgame').set_int(1)
+            ConVar('mp_restartgame').set_int(1)
 
         globals.players_spawn_manager = SpawnManager('player', global_vars.map_name)
         all_locations = globals.players_spawn_manager.locations
@@ -196,21 +180,12 @@ class BattleRoyal:
         globals.parachute.enable = False
 
         # Remove all spawned entities
-        Delay(1, self._remove_items)
+        Delay(1, items.clear)
 
-        # Clear dict and list
+        # Recreate player list
         dead_players = self._dead_players.copy()
         self._players.update(dead_players) 
         self._dead_players.clear()
-        # self._players.clear()
-        # self._dead_players.clear()
-
-    def _remove_items(self):
-        all_entities = self._items_ents.copy()
-        for index, item in all_entities.items():
-            Entity(index).remove()
-
-        self._items_ents.clear()
 
         
 ## GLOBALS

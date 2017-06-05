@@ -69,9 +69,8 @@ def _on_player_connect(event_data):
 
 @Event('player_disconnect')
 def _on_player_disconnect(event_data):
-    br_player = _battle_royal.get_player(event_data['userid'])
-    if br_player is None:
-        br_player = _battle_royal.get_dead_player(event_data['userid'])
+    player = _battle_royal.get_player(event_data['userid']) 
+    br_player = player if player is not None else _battle_royal.get_dead_player(event_data['userid'])
 
     if br_player is None:
         return
@@ -98,9 +97,9 @@ def _on_player_disconnect(event_data):
 def _on_round_start(event_data):
     for player in PlayerIter('all'):
         if _battle_royal.get_player(player) is None:
-            br_player = BattleRoyalPlayer(player.index, 50)
+            br_player = BattleRoyalPlayer(player.index)
             _battle_royal.add_player(br_player)
-    
+            
     globals.info_map_parameters = Entity.find_or_create("info_map_parameters")
 
     _battle_royal.warmup()
@@ -110,11 +109,13 @@ def _on_round_start(event_data):
 @Event('round_end')
 def _on_round_end(event_data):
     _battle_royal.end()
-    for player in PlayerIter('alive'):
+    for player in _battle_royal.players.values():
+        if player.inventory:
+            player.inventory.clear()
+
         for weapon in player.weapons():
-            player.drop_weapon(weapon.pointer, None, None)
-        player.primary_weapon  = None
-        player.secondary_weapon = None
+            player.delay(0.1, player.drop_weapon, (weapon.pointer))
+            player.delay(0.2, weapon.remove)
 
 
 @Event('player_spawn')

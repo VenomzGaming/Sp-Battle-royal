@@ -1,15 +1,11 @@
 ## IMPORTS
 
-from weapons.entity import Weapon
-from entities.helpers import index_from_pointer
-from listeners.tick import Delay
-from messages import SayText2
-
-from .weapon import WeaponItem
+from .weapon import Weapon
 
 
-class Deagle(WeaponItem):
+class Deagle(Weapon):
     name = 'Deagle'
+    classname = 'weapon_deagle'
     item_type = 'weapon'
     slot = 'secondary'
     clip = 10

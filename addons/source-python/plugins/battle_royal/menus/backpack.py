@@ -45,6 +45,7 @@ def _backpack_menu_select(menu, index, choice):
         next_menu.previous_menu = menu
         return next_menu
 
+
 ## SHOW ITEM INFO
 
 def _item_backpack_menu_build(menu, index):
@@ -69,7 +70,7 @@ def _item_backpack_menu_select(menu, index, choice):
     br_player = _battle_royal.get_player(Player(index))
     item = choice.value
     if isinstance(item, Item):
-        br_player.pick_up(item)
+        item.pick_up(br_player)
         return menu.previous_menu
     else:
         amount_menu = item
@@ -77,7 +78,6 @@ def _item_backpack_menu_select(menu, index, choice):
         amount_menu.previous_menu = menu
         return amount_menu
     
-
 
 def _item_amount_menu_build(menu, index):
     menu.clear()
@@ -95,13 +95,14 @@ def _item_amount_menu_build(menu, index):
     menu.append(SimpleOption(9, 'Close', highlight=True))
     return menu
 
+
 def _item_amount_menu_select(menu, index, choice):
     br_player = _battle_royal.get_player(Player(index))
     item = menu.item
     amount = choice.value
     if amount is not None:
         item.amount = amount
-    br_player.pick_up(item)
+    item.pick_up(br_player)
     return menu.previous_menu
 
 
