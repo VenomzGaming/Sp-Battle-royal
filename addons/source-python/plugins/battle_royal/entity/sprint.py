@@ -34,9 +34,16 @@ DEFAULT_PLAYER_SPEED = 1
 SPRINTING_PLAYER_SPEED = 1.2
 AIRBORNE_PLAYER_SPEED = 1
 
+
 ## CLASS
 
 class Sprint:
+    '''
+        Allow player to sprint.
+        :param BattleRoyalPlayer player:
+            A player.
+    '''
+
     def __init__(self, player):
         self.player = player
         self.sprinting = False
@@ -49,11 +56,13 @@ class Sprint:
             self._step_sounds.append(Sound(sound_path, player.index))
 
     def ensure_speed(self, speed):
+        '''Set player speed.'''
         if self.speed != speed:
             self.speed = speed
             self.player.speed = speed
 
     def step(self):
+        '''Player step sound.'''
         cur_step = time()
         if cur_step - self.last_step >= STEP_SOUND_INTERVAL:
             choice(self._step_sounds).play()

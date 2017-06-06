@@ -14,6 +14,15 @@ LOCATION_PATH = {
 
 
 class SpawnManager(dict):
+    '''
+        Class which manage all spawns points and save it
+        in Json file by map name.
+        :param str name:
+            Name of key in dict.
+        :param str map_name:
+            Current map name.
+
+    '''
 
     def __init__(self, name, map_name):
         super().__init__()
@@ -38,9 +47,11 @@ class SpawnManager(dict):
 
     @property
     def locations(self):
+        'Returns list of all locations.'
         return list(self.values())
 
     def _load_location(self):
+        'Load all locations from Json file.'
         self.clear()
 
         if self._path.find('.json') == -1:
@@ -62,6 +73,7 @@ class SpawnManager(dict):
                         )
 
     def _save_location(self):
+        'Save new location in Json file.'
         temp_dict = {}
         for key, location in self.items():
             temp_dict[key] = str(location.x) + ',' + str(location.y) + ',' + str(location.z)
@@ -70,11 +82,13 @@ class SpawnManager(dict):
             json.dump(temp_dict, data_json, indent=4, sort_keys=True)
 
     def add(self, name, value):
+        'Add location.'
         self[name] = value
         self._save_location()
 
     # Useless for the moment
     def remove(self, name=None, value=None):
+        'Remove location.'
         if value is not None:
             for key, val in self.items():
                 if val == value:

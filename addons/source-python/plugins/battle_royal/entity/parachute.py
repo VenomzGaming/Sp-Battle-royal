@@ -34,6 +34,9 @@ __all__ = (
 )
 
 class Parachute:
+    '''
+        Manage all players parachute.
+    '''
 
     _models = [
         Model('models/parachute/parachute_blue.mdl'),
@@ -47,18 +50,22 @@ class Parachute:
         self._parachutes = {}
 
     def set_enable(self, state):
+        '''Enable or Disable parachute usage.'''
         self._enable = state
 
     def get_enable(self):
+        '''Get parachute usage state.'''
         return self._enable
 
     enable = property(get_enable, set_enable)
 
     @property
     def parachutes(self):
+        '''Returns parachutes dictionnary.'''
         return self._parachutes
 
     def open(self, player):
+        '''Create parachute entity.'''
         entity = Entity.create('prop_dynamic_override')
         entity.model = choice(self._models)
         entity.teleport(player.origin, player.angles, None)
@@ -67,9 +74,11 @@ class Parachute:
         self._parachutes[player.userid] = (player, entity)
 
     def close(self, player):
+        '''Remove parachute entity.'''
         self._parachutes.pop(player.userid)[1].remove()
 
     def disable(self):
+        '''Disable and remove all parachutes.'''
         for player, entity_parachute in self.parachutes.values():
             entity_parachute.remove()
         self._parachutes.clear()

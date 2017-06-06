@@ -40,6 +40,9 @@ __all__ = (
 ## BATTLE ROYAL HUD MANAGER
 
 class BattleRoyalHud:
+    '''
+        Maanger BattleRoyal HUD.
+    '''
 
     warmup_hud = None
     match_hud = None

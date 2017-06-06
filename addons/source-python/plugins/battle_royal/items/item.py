@@ -23,7 +23,9 @@ ITEM_ENTITY_TYPES = Entity, Weapon
 ## STORAGE OF ALL ITEMS
 
 class Items(list):
-    'This class is used to store all <Items> and retrieve them by an attribute.'
+    '''
+        This class is used to store all <Items> and retrieve them by an attribute.
+    '''
 
     def find_by_index(self, index):
         'Find item by entity index'
@@ -52,11 +54,13 @@ items = Items()
 
 class Item(object):
     '''
-    Item is a unused class which implements
-    all specific attributes a static item
-    needs. Item has to be subclassed
-    and given event methods to be used
-    successfully.
+        Item is a unused class which implements
+        all specific attributes a static item
+        needs. Item has to be subclassed
+        and given event methods to be used
+        successfully.
+        :param Entity entity:
+            Existing Entity or Weapon.
     '''
 
     name = 'Unnamed'

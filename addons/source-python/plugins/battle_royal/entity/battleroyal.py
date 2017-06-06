@@ -44,6 +44,9 @@ __all__ = (
 
 
 class BattleRoyal:
+    '''
+        This class manage a BattleRoyal round.
+    '''
 
     def __init__(self):
         self.is_warmup = False
@@ -54,55 +57,65 @@ class BattleRoyal:
 
     @property
     def teams(self):
+        'Get all distrinct players group.'
         return self._teams
 
-    def get_team(self, team):
-        return self._teams[team.name] if team.name in self._teams else None
-
     def add_team(self, team):
+        'Add team.'
         self._teams[team.name] = team
 
     def remove_team(self, team):
+        'Remove team.'
         del self._teams[team.name] 
 
     @property
     def players(self):
+        'Returns dict with alive players.'
         return self._players   
 
     def get_player(self, player):
+        'Get a player by userid or Player object.'
         if isinstance(player, Player):
             return self._players[player.userid] if player.userid in self._players else None
         else:
             return self._players[player] if player in self._players else None
 
     def add_player(self, player):
+        'Add player.'
         self._players[player.userid] = player
 
     def remove_player(self, player):
+        'Remove player.'
         del self._players[player.userid]
 
     @property
     def deads(self):
+        'Returns all dead players.'
         return self._dead_players   
 
     def get_dead_player(self, player):
+        'Get dead players by userid or Player object.'
         if isinstance(player, Player):
             return self._dead_players[player.userid] if player.userid in self._dead_players else None
         else:
             return self._dead_players[player] if player in self._dead_players else None
 
     def add_dead_player(self, player):
+        'Add player to deads.'
         self._dead_players[player.userid] = player
 
     def remove_dead_player(self, player):
+        'Remove player to deads.'
         del self._dead_players[player.userid]
 
     def _god_mode_noblock(self, enable):
+        'Set god mode and noblock to all players.'
         for br_player in self._players.values():
             br_player.godmode = enable
             br_player.noblock = enable
 
     def spawn_item(self):
+        'Spawn all items on current map.'
         # Number of items depend on player and rarity of item add this attribute to item
         globals.items_spawn_manager = SpawnManager('item', global_vars.map_name)
         locations = globals.items_spawn_manager.locations
@@ -120,6 +133,7 @@ class BattleRoyal:
             SayText2('Any spawn point on this map.').send()
     
     def spawn_players(self, **kwargs):
+        'Spawn all players on the map.'
         if ConVar('mp_randomspawn').get_int() == 0:
             ConVar('mp_randomspawn').set_int(1)
             ConVar('mp_restartgame').set_int(1)
@@ -143,6 +157,7 @@ class BattleRoyal:
         spawn_player.spawn()
 
     def spread_gas(self):
+        'Begin gas spreading.'
         # Get random radius and gas the rest (Wave of gas depend on map maybe, 3 mini)
         # Maybe create a listener to start another gas spreading after the end of the following
         start = _configs['time_before_spreading'].get_int()
@@ -152,11 +167,13 @@ class BattleRoyal:
         wave_one.spread(start)
 
     def warmup(self):
+        'Run the warmup.'
         self.is_warmup = True
         self.spawn_players(spawn_type=0)
         self._god_mode_noblock(True)
 
     def start(self):
+        'Start a battle royal game.'
         SayText2('Match start !').send()
         self.is_warmup = False
         self.match_begin = True
@@ -175,6 +192,7 @@ class BattleRoyal:
         # self.spread_gas()
 
     def end(self):
+        'Stop a battle royal game.'
         self.match_begin = False
         self.is_warmup = False
         globals.parachute.enable = False

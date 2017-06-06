@@ -33,6 +33,7 @@ class Weapon(Item):
         self.clip = 15
 
     def can_be_used(self, player):
+        'Check if weapon can be used.'
         weapon = player.get_weapon(is_filters=self.slot)
         return True if weapon is None else False
 

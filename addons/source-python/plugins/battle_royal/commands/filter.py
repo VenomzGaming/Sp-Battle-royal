@@ -14,7 +14,7 @@ __all__ = (
 
 
 class Filter:
-    """This class provides some basic filters to iterate through players"""
+    '''This class provides some basic filters to iterate through players'''
 
     def __init__(self, string_to_filter, caller):
         self._symbols = {
@@ -39,6 +39,7 @@ class Filter:
             yield player
 
     def _by_selector(self, argument):
+        '''Returns player(s) by selector (bot, ct, alive ...).'''
         if argument in PlayerIter._filters:
             for target in PlayerIter(argument):
                 self._add_player(target)
@@ -47,7 +48,7 @@ class Filter:
 
 
     def _by_name(self, argument):
-        """Returns a list of players by their name"""
+        '''Returns a list of players by their name.'''
         players = {player.name: player for player in PlayerIter()}
         ## Fuzzywuzzy is used to trace a name to a player.
         name, percent = process.extractOne(argument, players.keys())
@@ -57,7 +58,7 @@ class Filter:
 
 
     def _by_userid(self, argument):
-        """Returns the player with this userid"""
+        '''Returns the player with this userid.'''
         try:
             player = Player.from_userid(int(argument))
         except ValueError:
@@ -67,6 +68,7 @@ class Filter:
 
 
     def _exists_by_attribute(self, value, attribute):
+        '''Check if attribute exist.'''
         for player in self._group:
             if getattr(player, attribute) == value:
                 return True
@@ -74,13 +76,14 @@ class Filter:
 
 
     def _add_player(self, target):
+        '''Add player.'''
         if self._exists_by_attribute(target.userid, 'userid'):
             return
         self._group.append(target)
 
 
     def _break_symbol_from_argument(self, part):
-        """Used to split symbol from arguments"""
+        '''Used to split symbol from arguments.'''
         symbol = part[0]
         argument = part[1:]
         if not symbol in self._symbols:
@@ -92,4 +95,5 @@ class Filter:
 
 
     def _get_symbol_filter(self, symbol):
+        '''Get function link to symbol.'''
         return self._symbols[symbol]

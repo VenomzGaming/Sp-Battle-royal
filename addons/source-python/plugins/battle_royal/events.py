@@ -50,6 +50,7 @@ from .utils.utils import BattleRoyalHud, set_proximity_listening, get_map_height
 
 @OnLevelInit
 def _on_level_init(map_name):
+    'Get maps infor.'
     #  Not sure about maybe just load it on level init
     # globals.items_spawn_manager = SpawnManager('item', map_name)
     # globals.players_spawn_manager = SpawnManager('player', map_name)
@@ -61,9 +62,8 @@ def _on_player_connect(event_data):
     if event_data['index'] == 0:
         return
 
-    player = Player(event_data['index'])
     if not _battle_royal.match_begin:
-        br_player = BattleRoyalPlayer(player.index, 50)
+        br_player = BattleRoyalPlayer(event_data['index'])
         _battle_royal.add_player(br_player)
         
 
@@ -114,7 +114,7 @@ def _on_round_end(event_data):
             player.inventory.clear()
 
         for weapon in player.weapons():
-            player.delay(0.1, player.drop_weapon, (weapon.pointer))
+            player.delay(0.1, player.drop_weapon, (weapon.pointer,))
             player.delay(0.2, weapon.remove)
 
 
